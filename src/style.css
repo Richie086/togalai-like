@@ -2057,4 +2057,64 @@ a {
   animation: markup-pulse 1.5s infinite linear;
 }
 
+/* Bluebeam-style interactive editing styles */
+.markup-selection-outline {
+  stroke: #00f2fe;
+  stroke-width: 1.5;
+  stroke-dasharray: 4, 3;
+  fill: none;
+  pointer-events: none;
+}
+
+.markup-drag-handle {
+  fill: #ffffff;
+  stroke: #00f2fe;
+  stroke-width: 2px;
+  cursor: ew-resize; /* fallback */
+  transition: fill 0.15s, stroke-width 0.15s, r 0.15s;
+}
+
+.markup-drag-handle:hover {
+  fill: #00f2fe;
+  stroke: #ffffff;
+  stroke-width: 2px;
+}
+
+/* Tool cursor overrides */
+.tool-select .blueprint-room,
+.tool-select .manual-markup-item,
+.tool-select .blueprint-fixture-point {
+  cursor: pointer !important;
+}
+
+.tool-select .blueprint-vector {
+  cursor: default !important;
+}
+
+.tool-select .blueprint-vector:active {
+  cursor: default !important;
+}
+
+/* Properties card styles */
+#prop-markup-name:focus {
+  border-color: var(--cyan) !important;
+  box-shadow: 0 0 4px rgba(6, 182, 212, 0.4);
+}
+
+#btn-delete-markup:hover {
+  background: rgba(244, 63, 94, 0.3) !important;
+  box-shadow: 0 0 8px rgba(244, 63, 94, 0.3);
+}
+
+#btn-close-properties:hover {
+  color: #ffffff !important;
+}
+
+/* Highlights for editable selected items */
+.editable-selected-glow {
+  filter: drop-shadow(0 0 4px var(--cyan)) !important;
+  stroke-width: 3.5px !important;
+}
+
+
 

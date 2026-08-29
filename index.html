@@ -298,6 +298,12 @@
                 <div class="canvas-actions" style="display: flex; gap: 0.5rem; align-items: center;">
                   <!-- Vector Markup Controls -->
                   <div class="markup-tools" style="display: flex; gap: 0.25rem; border-right: 1.5px solid var(--slate-border); padding-right: 0.75rem; margin-right: 0.25rem;">
+                    <button class="canvas-btn markup-tool-btn active" id="btn-markup-select" title="Select / Edit Takeoffs & Markups (Select a room or markup to drag, resize, or edit)" style="display: flex; align-items: center; justify-content: center;">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.9rem; height: 0.9rem;">
+                        <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />
+                        <path d="M13 13l6 6" />
+                      </svg>
+                    </button>
                     <button class="canvas-btn markup-tool-btn" id="btn-markup-area" title="Add Area Boundary (Click on canvas to draw polygon)" style="display: flex; align-items: center; justify-content: center;">
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.9rem; height: 0.9rem;"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" /></svg>
                     </button>
@@ -345,6 +351,9 @@
 
                   <!-- Tooltips overlay -->
                   <g id="canvas-tooltips-group"></g>
+
+                  <!-- Markup Selection Overlay (handles, outlines) -->
+                  <g id="markup-selection-group"></g>
                 </svg>
 
                 <div class="canvas-overlay-message" id="canvas-prompt-overlay">
@@ -363,6 +372,46 @@
 
                 <!-- Live tooltip box -->
                 <div class="html-tooltip" id="canvas-html-tooltip"></div>
+
+                <!-- Floating Markup Properties Card (Bluebeam Style) -->
+                <div class="canvas-takeoff-legend" id="canvas-properties-card" style="position: absolute; bottom: 1rem; left: 1rem; width: 280px; background: rgba(13, 21, 39, 0.85); backdrop-filter: blur(10px); border: 1.5px solid var(--slate-border); border-radius: 8px; padding: 0.75rem; z-index: 100; display: none; flex-direction: column; gap: 0.5rem; transition: all 0.3s ease;">
+                  <div style="font-size: 0.75rem; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.25rem; margin-bottom: 0.25rem; font-family: var(--font-sans); display: flex; justify-content: space-between; align-items: center;">
+                    <span>Markup Properties</span>
+                    <button id="btn-close-properties" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; padding: 0; line-height: 1;">&times;</button>
+                  </div>
+                  
+                  <div style="display: flex; flex-direction: column; gap: 0.25rem;">
+                    <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-sans);">Name / Label</label>
+                    <input type="text" id="prop-markup-name" style="background: rgba(30, 41, 59, 0.5); border: 1.5px solid var(--slate-border); border-radius: 4px; padding: 0.3rem 0.5rem; color: #ffffff; font-size: 0.75rem; font-family: var(--font-sans); outline: none; width: 100%; box-sizing: border-box;" />
+                  </div>
+                  
+                  <div style="display: flex; gap: 0.5rem;">
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 0.25rem;">
+                      <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-sans);">Fill Color</label>
+                      <input type="color" id="prop-markup-fill" style="width: 100%; height: 26px; border: 1.5px solid var(--slate-border); border-radius: 4px; background: none; cursor: pointer; padding: 0; outline: none; box-sizing: border-box;" />
+                    </div>
+                    <div style="flex: 1; display: flex; flex-direction: column; gap: 0.25rem;">
+                      <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-sans);">Border Color</label>
+                      <input type="color" id="prop-markup-border" style="width: 100%; height: 26px; border: 1.5px solid var(--slate-border); border-radius: 4px; background: none; cursor: pointer; padding: 0; outline: none; box-sizing: border-box;" />
+                    </div>
+                  </div>
+                  
+                  <div style="display: flex; gap: 0.5rem; background: rgba(255,255,255,0.02); border-radius: 4px; padding: 0.4rem; border: 1px solid rgba(255,255,255,0.04); font-family: var(--font-sans);">
+                    <div style="flex: 1; text-align: center;">
+                      <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase;">Area</div>
+                      <div id="prop-markup-area" style="font-size: 0.8rem; font-weight: 700; color: var(--cyan); margin-top: 0.1rem;">0 SF</div>
+                    </div>
+                    <div style="flex: 1; text-align: center; border-left: 1px solid rgba(255,255,255,0.08);">
+                      <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase;">Perimeter</div>
+                      <div id="prop-markup-perimeter" style="font-size: 0.8rem; font-weight: 700; color: var(--amber); margin-top: 0.1rem;">0 LF</div>
+                    </div>
+                  </div>
+                  
+                  <button id="btn-delete-markup" style="width: 100%; background: rgba(244, 63, 94, 0.15); border: 1.5px solid var(--rose); border-radius: 4px; color: var(--rose); font-size: 0.75rem; font-weight: 600; padding: 0.4rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.25rem; font-family: var(--font-sans);">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.8rem; height: 0.8rem;"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
+                    Delete Markup
+                  </button>
+                </div>
 
                 <!-- Floating Canvas Takeoff Legend -->
                 <div class="canvas-takeoff-legend" id="canvas-legend" style="position: absolute; bottom: 1rem; right: 1rem; background: rgba(13, 21, 39, 0.85); backdrop-filter: blur(10px); border: 1.5px solid var(--slate-border); border-radius: 8px; padding: 0.75rem; z-index: 10; display: none; flex-direction: column; gap: 0.5rem; transition: all 0.3s ease;">

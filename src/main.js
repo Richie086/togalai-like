@@ -421,9 +421,16 @@ const scenarioStates = {
   }
 };
 
-let activeMarkupMode = null; // 'area' or 'point'
+let activeMarkupMode = 'select'; // default tool mode: 'select', 'area', 'point'
 let currentPolygonPoints = [];
 const manualMarkups = []; // array of custom manual markup records
+
+// Selection & Dragging state (Bluebeam-style)
+let selectedMarkup = null;      // { type: 'room'|'manual-area'|'manual-point'|'fixture', id, element }
+let activeDragHandle = null;    // index of handle being dragged (number)
+let isDraggingShape = false;    // boolean indicating if we are moving the entire shape
+let shapeDragStartOffset = null; // offset between mouse and shape centroid / position
+
 
 
 // 3. Document Selectors & Events
@@ -436,6 +443,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initAssemblyConsole();
   initRadarChart();
   setupSmoothScrolling();
+  initPropertiesCardListeners();
 });
 
 // 4. Smooth Scroll & Navigation State
@@ -712,40 +720,75 @@ function initSimulator() {
   });
 
   // Vector Markup Toolset Buttons & Interactions
+  const btnMarkupSelect = document.getElementById('btn-markup-select');
   const btnMarkupArea = document.getElementById('btn-markup-area');
   const btnMarkupPoint = document.getElementById('btn-markup-point');
   const btnMarkupClear = document.getElementById('btn-markup-clear');
 
   function updateMarkupButtonStates() {
-    [btnMarkupArea, btnMarkupPoint].forEach(btn => {
+    const container = document.getElementById('blueprint-canvas-container');
+    [btnMarkupSelect, btnMarkupArea, btnMarkupPoint].forEach(btn => {
       if (!btn) return;
       btn.classList.remove('active');
       btn.style.borderColor = 'rgba(255, 255, 255, 0.1)';
       btn.style.boxShadow = 'none';
+      btn.style.background = 'transparent';
+      btn.style.color = 'var(--text-muted)';
     });
-    if (activeMarkupMode === 'area' && btnMarkupArea) {
+
+    if (container) {
+      container.classList.remove('tool-select');
+    }
+
+    if (activeMarkupMode === 'select' && btnMarkupSelect) {
+      btnMarkupSelect.classList.add('active');
+      btnMarkupSelect.style.borderColor = 'var(--cyan)';
+      btnMarkupSelect.style.boxShadow = '0 0 10px rgba(6, 182, 212, 0.3)';
+      btnMarkupSelect.style.background = 'rgba(6, 182, 212, 0.1)';
+      btnMarkupSelect.style.color = '#ffffff';
+      if (container) container.classList.add('tool-select');
+    } else if (activeMarkupMode === 'area' && btnMarkupArea) {
       btnMarkupArea.classList.add('active');
       btnMarkupArea.style.borderColor = 'var(--emerald)';
       btnMarkupArea.style.boxShadow = '0 0 10px rgba(16, 185, 129, 0.3)';
+      btnMarkupArea.style.background = 'rgba(16, 185, 129, 0.1)';
+      btnMarkupArea.style.color = '#ffffff';
     } else if (activeMarkupMode === 'point' && btnMarkupPoint) {
       btnMarkupPoint.classList.add('active');
       btnMarkupPoint.style.borderColor = 'var(--emerald)';
       btnMarkupPoint.style.boxShadow = '0 0 10px rgba(16, 185, 129, 0.3)';
+      btnMarkupPoint.style.background = 'rgba(16, 185, 129, 0.1)';
+      btnMarkupPoint.style.color = '#ffffff';
     }
 
-    if (activeMarkupMode) {
+    if (activeMarkupMode && activeMarkupMode !== 'select') {
       svgEl.classList.add('drawing-mode-active');
       svgEl.style.cursor = 'crosshair';
+      deselectMarkup(); // Clear selection when drawing
+    } else if (activeMarkupMode === 'select') {
+      svgEl.classList.remove('drawing-mode-active');
+      svgEl.style.cursor = 'default';
     } else {
       svgEl.classList.remove('drawing-mode-active');
       svgEl.style.cursor = 'default';
-      
-      // Cleanup temporary drawing elements
-      document.querySelectorAll('.temp-markup-node').forEach(el => el.remove());
-      const tempPoly = document.getElementById('temp-markup-poly');
-      if (tempPoly) tempPoly.remove();
-      currentPolygonPoints = [];
+      deselectMarkup();
     }
+    
+    // Cleanup temporary drawing elements
+    document.querySelectorAll('.temp-markup-node').forEach(el => el.remove());
+    const tempPoly = document.getElementById('temp-markup-poly');
+    if (tempPoly) tempPoly.remove();
+    currentPolygonPoints = [];
+  }
+
+  // Call it initially to set up correct defaults
+  setTimeout(updateMarkupButtonStates, 100);
+
+  if (btnMarkupSelect) {
+    btnMarkupSelect.addEventListener('click', () => {
+      activeMarkupMode = (activeMarkupMode === 'select') ? null : 'select';
+      updateMarkupButtonStates();
+    });
   }
 
   if (btnMarkupArea) {
@@ -764,7 +807,7 @@ function initSimulator() {
 
   if (btnMarkupClear) {
     btnMarkupClear.addEventListener('click', () => {
-      activeMarkupMode = null;
+      activeMarkupMode = 'select'; // revert to select
       updateMarkupButtonStates();
       
       // Clear manual markup SVG nodes
@@ -775,13 +818,14 @@ function initSimulator() {
       const manualLegend = document.getElementById('legend-manual-item');
       if (manualLegend) manualLegend.style.display = 'none';
 
+      deselectMarkup();
       updateCostEstimates();
     });
   }
 
   // SVG Drawing Click Handler
   svgEl.addEventListener('click', (e) => {
-    if (!activeMarkupMode) return;
+    if (!activeMarkupMode || activeMarkupMode === 'select') return;
 
     // Translate coordinates to SVG space
     const coords = getSvgCoords(e, svgEl);
@@ -791,7 +835,8 @@ function initSimulator() {
         id: 'markup-' + Date.now(),
         type: 'point',
         x: coords.x,
-        y: coords.y
+        y: coords.y,
+        name: 'Manual Fixture Count'
       };
       manualMarkups.push(newMarkup);
 
@@ -814,6 +859,28 @@ function initSimulator() {
       animate.setAttribute('dur', '1.5s');
       animate.setAttribute('repeatCount', 'indefinite');
       circle.appendChild(animate);
+
+      // Dynamic tooltip hover details
+      const tooltip = document.getElementById('canvas-html-tooltip');
+      circle.addEventListener('mousemove', (ev) => {
+        const containerRect = document.getElementById('blueprint-canvas-container').getBoundingClientRect();
+        const mouseX = ev.clientX - containerRect.left + 15;
+        const mouseY = ev.clientY - containerRect.top + 15;
+        tooltip.style.left = `${mouseX}px`;
+        tooltip.style.top = `${mouseY}px`;
+        tooltip.style.opacity = '1';
+        
+        const currentMarkup = manualMarkups.find(m => m.id === newMarkup.id);
+        const name = (currentMarkup && currentMarkup.name) ? currentMarkup.name : 'Manual Fixture Count';
+        
+        tooltip.innerHTML = `
+          <h5>${name}</h5>
+          <p><span class="label">Location:</span> <strong>X:${Math.round(circle.getAttribute('cx'))}, Y:${Math.round(circle.getAttribute('cy'))}</strong></p>
+        `;
+      });
+      circle.addEventListener('mouseleave', () => {
+        tooltip.style.opacity = '0';
+      });
 
       document.getElementById('ai-highlights-group').appendChild(circle);
 
@@ -859,6 +926,180 @@ function initSimulator() {
       const pointsStr = currentPolygonPoints.map(p => `${p.x},${p.y}`).join(' ');
       tempPoly.setAttribute('points', pointsStr);
     }
+  });
+
+  // SVG Mouse Down Delegation for Selecting and Dragging (Bluebeam Style)
+  svgEl.addEventListener('mousedown', (e) => {
+    if (activeMarkupMode !== 'select') return;
+
+    const target = e.target;
+    let isSelectable = false;
+    let type = '';
+    let id = '';
+    
+    if (target.classList.contains('blueprint-room')) {
+      isSelectable = true;
+      type = 'room';
+      id = target.getAttribute('data-id');
+    } else if (target.classList.contains('manual-markup-polygon')) {
+      isSelectable = true;
+      type = 'manual-area';
+      id = target.getAttribute('id');
+    } else if (target.classList.contains('manual-markup-point')) {
+      isSelectable = true;
+      type = 'manual-point';
+      id = target.getAttribute('id');
+    } else if (target.classList.contains('blueprint-fixture')) {
+      isSelectable = true;
+      type = 'fixture';
+      id = target.getAttribute('id') || 'fixture-' + Date.now();
+      if (!target.getAttribute('id')) target.setAttribute('id', id);
+    }
+    
+    if (isSelectable) {
+      e.stopPropagation();
+      selectMarkup(type, id, target);
+      
+      const mouseCoords = getSvgCoords(e, svgEl);
+      if (type === 'room') {
+        const room = currentBlueprint.rooms.find(r => r.id === id);
+        if (room) {
+          const points = parseSvgPathPoints(room.path);
+          isDraggingShape = true;
+          shapeDragStartOffset = points.map(p => ({ x: p.x - mouseCoords.x, y: p.y - mouseCoords.y }));
+        }
+      } else if (type === 'manual-area') {
+        const markup = manualMarkups.find(m => m.id === id);
+        if (markup) {
+          isDraggingShape = true;
+          shapeDragStartOffset = markup.points.map(p => ({ x: p.x - mouseCoords.x, y: p.y - mouseCoords.y }));
+        }
+      } else if (type === 'manual-point' || type === 'fixture') {
+        const cx = parseFloat(target.getAttribute('cx'));
+        const cy = parseFloat(target.getAttribute('cy'));
+        isDraggingShape = true;
+        shapeDragStartOffset = { x: cx - mouseCoords.x, y: cy - mouseCoords.y };
+      }
+    } else {
+      if (!target.classList.contains('markup-drag-handle') && !target.closest('#canvas-properties-card')) {
+        deselectMarkup();
+      }
+    }
+  });
+
+  // Window-level mouse movements for resizing/resizing active dragged markup
+  window.addEventListener('mousemove', (e) => {
+    if (activeDragHandle === null && !isDraggingShape) return;
+    if (!selectedMarkup) return;
+
+    const mouseCoords = getSvgCoords(e, svgEl);
+    const newX = Math.max(10, Math.min(790, mouseCoords.x));
+    const newY = Math.max(10, Math.min(490, mouseCoords.y));
+
+    const { type, id, element } = selectedMarkup;
+
+    if (activeDragHandle !== null) {
+      // Dragging a vertex handle
+      if (type === 'room') {
+        const room = currentBlueprint.rooms.find(r => r.id === id);
+        if (room) {
+          const points = parseSvgPathPoints(room.path);
+          points[activeDragHandle] = { x: newX, y: newY };
+          room.path = generateSvgPathFromPoints(points);
+          element.setAttribute('d', room.path);
+          
+          const centroid = getPolygonCentroid(points);
+          const labelEl = document.getElementById(`room-label-${room.id}`);
+          if (labelEl) {
+            labelEl.setAttribute('x', centroid.x);
+            labelEl.setAttribute('y', centroid.y);
+          }
+          
+          const newPixelArea = getPolygonArea(points);
+          room.area = Math.round(room.originalSF * (newPixelArea / room.originalPixelArea));
+          updatePresetWallsAndTotals();
+        }
+      } else if (type === 'manual-area') {
+        const markup = manualMarkups.find(m => m.id === id);
+        if (markup) {
+          markup.points[activeDragHandle] = { x: newX, y: newY };
+          const pointsStr = markup.points.map(p => `${p.x},${p.y}`).join(' ');
+          element.setAttribute('points', pointsStr);
+          
+          const areaVal = getPolygonArea(markup.points);
+          const perimeterVal = getPolygonPerimeter(markup.points);
+          markup.area = Math.round(areaVal * 0.36);
+          markup.perimeter = Math.round(perimeterVal * 0.6);
+        }
+      }
+    } else if (isDraggingShape) {
+      // Moving/translating the entire object
+      if (type === 'room') {
+        const room = currentBlueprint.rooms.find(r => r.id === id);
+        if (room) {
+          const points = parseSvgPathPoints(room.path);
+          const shiftedPoints = points.map((p, idx) => ({
+            x: Math.max(10, Math.min(790, mouseCoords.x + shapeDragStartOffset[idx].x)),
+            y: Math.max(10, Math.min(490, mouseCoords.y + shapeDragStartOffset[idx].y))
+          }));
+          room.path = generateSvgPathFromPoints(shiftedPoints);
+          element.setAttribute('d', room.path);
+          
+          const centroid = getPolygonCentroid(shiftedPoints);
+          const labelEl = document.getElementById(`room-label-${room.id}`);
+          if (labelEl) {
+            labelEl.setAttribute('x', centroid.x);
+            labelEl.setAttribute('y', centroid.y);
+          }
+
+          const newPixelArea = getPolygonArea(shiftedPoints);
+          room.area = Math.round(room.originalSF * (newPixelArea / room.originalPixelArea));
+          updatePresetWallsAndTotals();
+        }
+      } else if (type === 'manual-area') {
+        const markup = manualMarkups.find(m => m.id === id);
+        if (markup) {
+          const shiftedPoints = markup.points.map((p, idx) => ({
+            x: Math.max(10, Math.min(790, mouseCoords.x + shapeDragStartOffset[idx].x)),
+            y: Math.max(10, Math.min(490, mouseCoords.y + shapeDragStartOffset[idx].y))
+          }));
+          markup.points = shiftedPoints;
+          const pointsStr = shiftedPoints.map(p => `${p.x},${p.y}`).join(' ');
+          element.setAttribute('points', pointsStr);
+        }
+      } else if (type === 'manual-point') {
+        const markup = manualMarkups.find(m => m.id === id);
+        if (markup) {
+          const finalX = Math.max(10, Math.min(790, mouseCoords.x + shapeDragStartOffset.x));
+          const finalY = Math.max(10, Math.min(490, mouseCoords.y + shapeDragStartOffset.y));
+          markup.x = finalX;
+          markup.y = finalY;
+          element.setAttribute('cx', finalX);
+          element.setAttribute('cy', finalY);
+        }
+      } else if (type === 'fixture') {
+        const finalX = Math.max(10, Math.min(790, mouseCoords.x + shapeDragStartOffset.x));
+        const finalY = Math.max(10, Math.min(490, mouseCoords.y + shapeDragStartOffset.y));
+        element.setAttribute('cx', finalX);
+        element.setAttribute('cy', finalY);
+        
+        const matchingFix = findClosestBlueprintFixture(finalX, finalY);
+        if (matchingFix) {
+          matchingFix.x = finalX;
+          matchingFix.y = finalY;
+        }
+      }
+    }
+
+    drawSelectionHandles();
+    updatePropertiesCardValues();
+    updateCostEstimates();
+  });
+
+  window.addEventListener('mouseup', () => {
+    activeDragHandle = null;
+    isDraggingShape = false;
+    shapeDragStartOffset = null;
   });
 
   // Key bindings helper to finish area with Enter or cancel with Escape
@@ -941,10 +1182,16 @@ function initSimulator() {
       tooltip.style.left = `${x}px`;
       tooltip.style.top = `${y}px`;
       tooltip.style.opacity = '1';
+
+      const currentMarkup = manualMarkups.find(m => m.id === newMarkup.id);
+      const name = (currentMarkup && currentMarkup.name) ? currentMarkup.name : 'Manual Takeoff Area';
+      const currentArea = currentMarkup ? currentMarkup.area : scaledArea;
+      const currentPerim = currentMarkup ? currentMarkup.perimeter : scaledPerimeter;
+
       tooltip.innerHTML = `
-        <h5>Manual Takeoff Area</h5>
-        <p><span class="label">Calculated Area:</span> <strong>${scaledArea} SF</strong></p>
-        <p><span class="label">Perimeter (Wall):</span> <strong>${scaledPerimeter} LF</strong></p>
+        <h5>${name}</h5>
+        <p><span class="label">Calculated Area:</span> <strong>${currentArea} SF</strong></p>
+        <p><span class="label">Perimeter (Wall):</span> <strong>${currentPerim} LF</strong></p>
       `;
     });
     poly.addEventListener('mouseleave', () => {
@@ -1104,10 +1351,11 @@ function initSimulator() {
     const manualLegend = document.getElementById('legend-manual-item');
     if (manualLegend) manualLegend.style.display = 'none';
     
-    activeMarkupMode = null;
+    activeMarkupMode = 'select';
     updateMarkupButtonStates();
     document.querySelectorAll('.manual-markup-item').forEach(el => el.remove());
     manualMarkups.length = 0;
+    deselectMarkup();
   }
 
   function drawBlueprintStatic() {
@@ -1120,6 +1368,9 @@ function initSimulator() {
     tooltipsGroup.innerHTML = '';
 
     if (!currentBlueprint) return;
+
+    // Initialize metrics
+    initBlueprintOriginalMetrics();
 
     // If it's a custom blueprint and we have an image data URL, or if the current blueprint has a predefined imageUrl, draw the image
     let bgUrl = null;
@@ -1189,6 +1440,7 @@ function initSimulator() {
     // Add room text placeholders (pre-analysis)
     currentBlueprint.rooms.forEach(room => {
       const textEl = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+      textEl.setAttribute('id', `room-label-${room.id}`);
       textEl.setAttribute('x', room.textX);
       textEl.setAttribute('y', room.textY);
       textEl.setAttribute('text-anchor', 'middle');
@@ -1321,6 +1573,8 @@ function initSimulator() {
     roomPath.setAttribute('stroke-width', '2.5');
     roomPath.setAttribute('class', 'blueprint-room active-takeoff-layer');
     roomPath.setAttribute('data-layer', 'areas');
+    roomPath.setAttribute('data-id', room.id);
+    roomPath.setAttribute('data-type', 'room');
     roomPath.style.opacity = '0';
     roomPath.style.transition = 'opacity 0.6s ease';
     
@@ -2150,12 +2404,42 @@ function updateCostEstimates() {
     if (listEl) {
       listEl.innerHTML = '';
       currentBlueprint.materials.forEach(mat => {
+        let ratio = 1.0;
+        const nameLower = mat.name.toLowerCase();
+        
+        if (nameLower.includes('stud') || nameLower.includes('drywall') || nameLower.includes('board') || nameLower.includes('wall')) {
+          const originalWalls = currentBlueprint.originalLinearWalls || currentBlueprint.linearWalls || 1;
+          ratio = walls / (originalWalls * floors);
+        } else if (nameLower.includes('carpet') || nameLower.includes('flooring') || nameLower.includes('tile') || nameLower.includes('vinyl') || nameLower.includes('oak') || nameLower.includes('concrete')) {
+          const originalArea = currentBlueprint.originalTotalArea || currentBlueprint.totalArea || 1;
+          ratio = area / (originalArea * floors);
+        } else if (nameLower.includes('door') || nameLower.includes('frame')) {
+          const originalDoors = currentBlueprint.originalDoors || currentBlueprint.doors || 1;
+          ratio = doors / (originalDoors * floors);
+        } else if (nameLower.includes('window') || nameLower.includes('glazing')) {
+          const originalWindows = currentBlueprint.originalWindows || currentBlueprint.windows || 1;
+          ratio = windows / (originalWindows * floors);
+        }
+
+        // Extrapolate multi-floor factor directly since ratio is relative to single floor
+        ratio = ratio * floors;
+
+        // Parse number from original qty (e.g. "120 Sheets" -> 120)
+        const match = mat.qty.match(/^([\d\.]+)(\s*\D.*)$/);
+        let displayQty = mat.qty;
+        if (match) {
+          const origVal = parseFloat(match[1]);
+          const unit = match[2];
+          const newVal = Math.max(1, Math.round(origVal * ratio));
+          displayQty = `${newVal}${unit}`;
+        }
+
         const li = document.createElement('li');
         li.className = 'material-item';
         const formattedName = formatMaterialName(mat.name, mat.name);
         li.innerHTML = `
           <span class="material-name">${formattedName}</span>
-          <span class="material-quantity">${mat.qty}</span>
+          <span class="material-quantity">${displayQty}</span>
         `;
         listEl.appendChild(li);
       });
@@ -2755,4 +3039,411 @@ function drawCustomBlueprintPlaceholder() {
   textEl.setAttribute('font-weight', '500');
   textEl.textContent = 'Drag and drop or select your blueprint image to begin simulation';
   drawingsGroup.appendChild(textEl);
+}
+
+// -------------------------------------------------------------
+// Interactive Blueprint Editor Functions (Bluebeam-style)
+// -------------------------------------------------------------
+
+function parseSvgPathPoints(pathStr) {
+  const points = [];
+  const regex = /(-?\d+\.?\d*)\s*,\s*(-?\d+\.?\d*)/g;
+  let match;
+  while ((match = regex.exec(pathStr)) !== null) {
+    points.push({ x: parseFloat(match[1]), y: parseFloat(match[2]) });
+  }
+  return points;
+}
+
+function generateSvgPathFromPoints(points) {
+  if (!points || points.length === 0) return '';
+  let pathStr = `M ${points[0].x},${points[0].y}`;
+  for (let i = 1; i < points.length; i++) {
+    pathStr += ` L ${points[i].x},${points[i].y}`;
+  }
+  pathStr += ' Z';
+  return pathStr;
+}
+
+function getPolygonCentroid(pts) {
+  let cx = 0, cy = 0;
+  let area = 0;
+  const n = pts.length;
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    const factor = (pts[i].x * pts[j].y - pts[j].x * pts[i].y);
+    area += factor;
+    cx += (pts[i].x + pts[j].x) * factor;
+    cy += (pts[i].y + pts[j].y) * factor;
+  }
+  area = area / 2;
+  if (Math.abs(area) < 0.0001) {
+    let minX = Infinity, maxX = -Infinity, minY = Infinity, maxY = -Infinity;
+    pts.forEach(p => {
+      minX = Math.min(minX, p.x);
+      maxX = Math.max(maxX, p.x);
+      minY = Math.min(minY, p.y);
+      maxY = Math.max(maxY, p.y);
+    });
+    return { x: (minX + maxX) / 2, y: (minY + maxY) / 2 };
+  }
+  cx = cx / (6 * area);
+  cy = cy / (6 * area);
+  return { x: Math.abs(cx), y: Math.abs(cy) };
+}
+
+function initBlueprintOriginalMetrics() {
+  if (!currentBlueprint) return;
+  
+  currentBlueprint.rooms.forEach(room => {
+    if (!room.originalSF) {
+      room.originalSF = room.area;
+      const pts = parseSvgPathPoints(room.path);
+      room.originalPixelArea = getPolygonArea(pts) || 1;
+      room.originalPixelPerimeter = getPolygonPerimeter(pts) || 1;
+    }
+  });
+
+  if (!currentBlueprint.originalLinearWalls) {
+    currentBlueprint.originalLinearWalls = currentBlueprint.linearWalls;
+    let totalOrigPerim = 0;
+    currentBlueprint.rooms.forEach(r => {
+      totalOrigPerim += r.originalPixelPerimeter || 1;
+    });
+    currentBlueprint.originalTotalPixelPerimeter = totalOrigPerim || 1;
+  }
+
+  if (!currentBlueprint.originalTotalArea) {
+    currentBlueprint.originalTotalArea = currentBlueprint.totalArea;
+  }
+  if (!currentBlueprint.originalDoors) {
+    currentBlueprint.originalDoors = currentBlueprint.doors;
+  }
+  if (!currentBlueprint.originalWindows) {
+    currentBlueprint.originalWindows = currentBlueprint.windows;
+  }
+}
+
+function updatePresetWallsAndTotals() {
+  if (!currentBlueprint) return;
+  let totalNewPerim = 0;
+  currentBlueprint.rooms.forEach(r => {
+    const pts = parseSvgPathPoints(r.path);
+    totalNewPerim += getPolygonPerimeter(pts);
+  });
+  const perimRatio = totalNewPerim / currentBlueprint.originalTotalPixelPerimeter;
+  currentBlueprint.linearWalls = Math.round(currentBlueprint.originalLinearWalls * perimRatio);
+  currentBlueprint.totalArea = currentBlueprint.rooms.reduce((sum, r) => sum + r.area, 0);
+}
+
+function findClosestBlueprintFixture(x, y) {
+  if (!currentBlueprint || !currentBlueprint.fixtures) return null;
+  let closest = null;
+  let minDist = Infinity;
+  currentBlueprint.fixtures.forEach(fix => {
+    const dist = Math.sqrt((fix.x - x) ** 2 + (fix.y - y) ** 2);
+    if (dist < minDist) {
+      minDist = dist;
+      closest = fix;
+    }
+  });
+  return minDist < 50 ? closest : null;
+}
+
+function selectMarkup(type, id, element) {
+  if (selectedMarkup && selectedMarkup.element) {
+    selectedMarkup.element.classList.remove('editable-selected-glow');
+  }
+
+  selectedMarkup = { type, id, element };
+  element.classList.add('editable-selected-glow');
+
+  drawSelectionHandles();
+  updatePropertiesCardValues();
+  
+  const card = document.getElementById('canvas-properties-card');
+  if (card) card.style.display = 'flex';
+}
+
+function deselectMarkup() {
+  if (selectedMarkup && selectedMarkup.element) {
+    selectedMarkup.element.classList.remove('editable-selected-glow');
+  }
+  selectedMarkup = null;
+
+  const selectionGroup = document.getElementById('markup-selection-group');
+  if (selectionGroup) selectionGroup.innerHTML = '';
+
+  const card = document.getElementById('canvas-properties-card');
+  if (card) card.style.display = 'none';
+}
+
+function drawSelectionHandles() {
+  const selectionGroup = document.getElementById('markup-selection-group');
+  if (!selectionGroup) return;
+  selectionGroup.innerHTML = '';
+
+  if (!selectedMarkup) return;
+
+  const { type, id, element } = selectedMarkup;
+
+  let points = [];
+  let isPolygon = false;
+  let centerX = 0;
+  let centerY = 0;
+
+  if (type === 'room') {
+    const room = currentBlueprint.rooms.find(r => r.id === id);
+    if (!room) return;
+    points = parseSvgPathPoints(room.path);
+    isPolygon = true;
+  } else if (type === 'manual-area') {
+    const markup = manualMarkups.find(m => m.id === id);
+    if (!markup) return;
+    points = [...markup.points];
+    isPolygon = true;
+  } else if (type === 'manual-point') {
+    const markup = manualMarkups.find(m => m.id === id);
+    if (!markup) return;
+    centerX = markup.x;
+    centerY = markup.y;
+    isPolygon = false;
+  } else if (type === 'fixture') {
+    const cx = parseFloat(element.getAttribute('cx'));
+    const cy = parseFloat(element.getAttribute('cy'));
+    centerX = cx;
+    centerY = cy;
+    isPolygon = false;
+  }
+
+  if (isPolygon && points.length > 0) {
+    const outline = document.createElementNS('http://www.w3.org/2000/svg', 'polygon');
+    const pointsStr = points.map(p => `${p.x},${p.y}`).join(' ');
+    outline.setAttribute('points', pointsStr);
+    outline.setAttribute('class', 'markup-selection-outline');
+    
+    outline.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      isDraggingShape = true;
+      const svgEl = document.getElementById('blueprint-svg');
+      const startMouseCoords = getSvgCoords(e, svgEl);
+      shapeDragStartOffset = points.map(p => ({ x: p.x - startMouseCoords.x, y: p.y - startMouseCoords.y }));
+    });
+    
+    selectionGroup.appendChild(outline);
+
+    points.forEach((pt, index) => {
+      const handle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+      handle.setAttribute('cx', pt.x);
+      handle.setAttribute('cy', pt.y);
+      handle.setAttribute('r', '6');
+      handle.setAttribute('class', 'markup-drag-handle');
+      handle.setAttribute('title', `Drag to reshape vertex ${index + 1}`);
+
+      handle.addEventListener('mousedown', (e) => {
+        e.stopPropagation();
+        activeDragHandle = index;
+      });
+
+      selectionGroup.appendChild(handle);
+    });
+  } else {
+    const handle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    handle.setAttribute('cx', centerX);
+    handle.setAttribute('cy', centerY);
+    handle.setAttribute('r', '7');
+    handle.setAttribute('class', 'markup-drag-handle');
+    handle.setAttribute('title', 'Drag to move fixture');
+    handle.style.cursor = 'move';
+
+    handle.addEventListener('mousedown', (e) => {
+      e.stopPropagation();
+      isDraggingShape = true;
+      const svgEl = document.getElementById('blueprint-svg');
+      const startMouseCoords = getSvgCoords(e, svgEl);
+      shapeDragStartOffset = { x: centerX - startMouseCoords.x, y: centerY - startMouseCoords.y };
+    });
+
+    selectionGroup.appendChild(handle);
+  }
+}
+
+function updatePropertiesCardValues() {
+  const card = document.getElementById('canvas-properties-card');
+  const nameInput = document.getElementById('prop-markup-name');
+  const fillInput = document.getElementById('prop-markup-fill');
+  const borderInput = document.getElementById('prop-markup-border');
+  const areaReadout = document.getElementById('prop-markup-area');
+  const perimeterReadout = document.getElementById('prop-markup-perimeter');
+  
+  if (!selectedMarkup || !card) return;
+
+  const { type, id, element } = selectedMarkup;
+
+  if (type === 'room') {
+    const room = currentBlueprint.rooms.find(r => r.id === id);
+    if (room) {
+      if (document.activeElement !== nameInput) nameInput.value = room.name;
+      fillInput.value = rgbToHex(room.color) || '#6366f1';
+      borderInput.value = room.border || '#6366f1';
+      areaReadout.textContent = `${room.area} SF`;
+      
+      const pts = parseSvgPathPoints(room.path);
+      const perimVal = Math.round(getPolygonPerimeter(pts) * 0.6);
+      perimeterReadout.textContent = `${perimVal} LF`;
+    }
+  } else if (type === 'manual-area') {
+    const markup = manualMarkups.find(m => m.id === id);
+    if (markup) {
+      if (document.activeElement !== nameInput) nameInput.value = markup.name || 'Manual Takeoff Area';
+      fillInput.value = rgbToHex(element.getAttribute('fill')) || '#10b981';
+      borderInput.value = element.getAttribute('stroke') || '#10b981';
+      areaReadout.textContent = `${markup.area} SF`;
+      perimeterReadout.textContent = `${markup.perimeter} LF`;
+    }
+  } else if (type === 'manual-point' || type === 'fixture') {
+    const currentMarkup = type === 'manual-point' ? manualMarkups.find(m => m.id === id) : null;
+    const name = type === 'manual-point' 
+      ? (currentMarkup && currentMarkup.name ? currentMarkup.name : 'Manual Fixture Count')
+      : 'AI Fixture Count';
+    if (document.activeElement !== nameInput) nameInput.value = name;
+    fillInput.value = rgbToHex(element.getAttribute('fill')) || '#06b6d4';
+    borderInput.value = rgbToHex(element.getAttribute('stroke')) || '#ffffff';
+    areaReadout.textContent = '--';
+    perimeterReadout.textContent = '--';
+  }
+}
+
+function rgbToHex(rgbaStr) {
+  if (!rgbaStr) return '#06b6d4';
+  if (rgbaStr.startsWith('#')) return rgbaStr;
+  const match = rgbaStr.match(/\d+/g);
+  if (!match || match.length < 3) return '#06b6d4';
+  const r = parseInt(match[0]);
+  const g = parseInt(match[1]);
+  const b = parseInt(match[2]);
+  return "#" + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
+}
+
+function hexToRgba(hex, alpha) {
+  const r = parseInt(hex.slice(1, 3), 16);
+  const g = parseInt(hex.slice(3, 5), 16);
+  const b = parseInt(hex.slice(5, 7), 16);
+  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+}
+
+function initPropertiesCardListeners() {
+  const nameInput = document.getElementById('prop-markup-name');
+  const fillInput = document.getElementById('prop-markup-fill');
+  const borderInput = document.getElementById('prop-markup-border');
+  const btnCloseProperties = document.getElementById('btn-close-properties');
+  const btnDeleteMarkup = document.getElementById('btn-delete-markup');
+
+  if (!nameInput) return;
+
+  nameInput.addEventListener('input', (e) => {
+    if (!selectedMarkup) return;
+    const { type, id } = selectedMarkup;
+    const newName = e.target.value;
+    
+    if (type === 'room') {
+      const room = currentBlueprint.rooms.find(r => r.id === id);
+      if (room) {
+        room.name = newName;
+        const labelEl = document.getElementById(`room-label-${room.id}`);
+        if (labelEl) labelEl.textContent = newName;
+      }
+    } else if (type === 'manual-area') {
+      const markup = manualMarkups.find(m => m.id === id);
+      if (markup) markup.name = newName;
+    } else if (type === 'manual-point') {
+      const markup = manualMarkups.find(m => m.id === id);
+      if (markup) markup.name = newName;
+    }
+  });
+
+  function updateColorFill(newHex) {
+    if (!selectedMarkup) return;
+    const { type, id, element } = selectedMarkup;
+    if (type === 'room') {
+      const room = currentBlueprint.rooms.find(r => r.id === id);
+      if (room) {
+        room.color = hexToRgba(newHex, 0.25);
+        element.setAttribute('fill', room.color);
+      }
+    } else if (type === 'manual-area') {
+      const markup = manualMarkups.find(m => m.id === id);
+      if (markup) {
+        element.setAttribute('fill', hexToRgba(newHex, 0.25));
+      }
+    } else {
+      element.setAttribute('fill', newHex);
+    }
+  }
+
+  function updateColorBorder(newHex) {
+    if (!selectedMarkup) return;
+    const { type, id, element } = selectedMarkup;
+    if (type === 'room') {
+      const room = currentBlueprint.rooms.find(r => r.id === id);
+      if (room) {
+        room.border = newHex;
+        element.setAttribute('stroke', newHex);
+      }
+    } else if (type === 'manual-area') {
+      element.setAttribute('stroke', newHex);
+    } else {
+      element.setAttribute('stroke', newHex);
+    }
+  }
+
+  fillInput.addEventListener('input', (e) => updateColorFill(e.target.value));
+  borderInput.addEventListener('input', (e) => updateColorBorder(e.target.value));
+
+  btnCloseProperties.addEventListener('click', () => {
+    deselectMarkup();
+  });
+
+  btnDeleteMarkup.addEventListener('click', () => {
+    if (!selectedMarkup) return;
+    const { type, id, element } = selectedMarkup;
+
+    if (type === 'room') {
+      const idx = currentBlueprint.rooms.findIndex(r => r.id === id);
+      if (idx !== -1) {
+        currentBlueprint.rooms.splice(idx, 1);
+      }
+      element.remove();
+      const label = document.getElementById(`room-label-${id}`);
+      if (label) label.remove();
+      updatePresetWallsAndTotals();
+    } else if (type === 'manual-area') {
+      const idx = manualMarkups.findIndex(m => m.id === id);
+      if (idx !== -1) {
+        manualMarkups.splice(idx, 1);
+      }
+      element.remove();
+    } else if (type === 'manual-point') {
+      const idx = manualMarkups.findIndex(m => m.id === id);
+      if (idx !== -1) {
+        manualMarkups.splice(idx, 1);
+      }
+      element.remove();
+    } else if (type === 'fixture') {
+      element.remove();
+      const fixIndex = currentBlueprint.fixtures.findIndex(f => {
+        const cx = parseFloat(element.getAttribute('cx'));
+        const cy = parseFloat(element.getAttribute('cy'));
+        return Math.sqrt((f.x - cx)**2 + (f.y - cy)**2) < 5;
+      });
+      if (fixIndex !== -1) {
+        currentBlueprint.fixtures.splice(fixIndex, 1);
+        currentBlueprint.doors = currentBlueprint.fixtures.filter(f => f.type === 'door').length;
+        currentBlueprint.windows = currentBlueprint.fixtures.filter(f => f.type === 'window').length;
+      }
+    }
+
+    deselectMarkup();
+    updateCostEstimates();
+  });
 }
