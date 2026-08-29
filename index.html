@@ -1,0 +1,1295 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="./favicon.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    
+    <!-- Primary SEO Meta Tags -->
+    <title>TakeoffCompass - AI Preconstruction Takeoff Comparison & Interactive Simulator</title>
+    <meta name="description" content="Compare Togal.AI alternatives and leading preconstruction takeoff software. Test our interactive AI takeoff simulator, use the ROI calculator, and find the perfect AI-powered estimating tool for your construction workflow." />
+    <meta name="keywords" content="Togal.AI alternatives, AI quantity takeoff, preconstruction software, digital takeoff, Kreo, STACK, Quotr.ai, Bluebeam Revu, On-Screen Takeoff, construction estimation" />
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content="TakeoffCompass - AI Preconstruction Takeoff Comparison & Interactive Simulator" />
+    <meta property="og:description" content="Compare Togal.AI alternatives and leading preconstruction takeoff software. Test our interactive AI takeoff simulator, use the ROI calculator, and find the perfect AI-powered estimating tool for your construction workflow." />
+    
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:title" content="TakeoffCompass - AI Preconstruction Takeoff Comparison & Interactive Simulator" />
+    <meta property="twitter:description" content="Compare Togal.AI alternatives and leading preconstruction takeoff software. Test our interactive AI takeoff simulator, use the ROI calculator, and find the perfect AI-powered estimating tool for your construction workflow." />
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script type="module" crossorigin src="./assets/index-BrHFjRD4.js"></script>
+    <link rel="stylesheet" crossorigin href="./assets/index-DHB6TQji.css">
+  </head>
+  <body>
+    <!-- App Header -->
+    <header class="app-header">
+      <div class="header-container">
+        <a href="#" class="logo-link" id="header-logo">
+          <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+          </svg>
+          <span class="logo-text">Takeoff<span class="logo-highlight">Compass</span></span>
+        </a>
+        <nav class="main-nav">
+          <ul class="nav-links">
+            <li><a href="#simulator" class="nav-link active" id="nav-item-simulator">Takeoff Simulator</a></li>
+            <li><a href="#directory" class="nav-link" id="nav-item-directory">Product Directory</a></li>
+            <li><a href="#matcher" class="nav-link" id="nav-item-matcher">Workflow Matcher</a></li>
+            <li><a href="#roi-calculator" class="nav-link" id="nav-item-roi">ROI Calculator</a></li>
+            <li><a href="#matrix" class="nav-link" id="nav-item-matrix">Comparison Matrix</a></li>
+          </ul>
+        </nav>
+        <div class="header-actions">
+          <a href="#simulator" class="btn btn-primary btn-sm" id="btn-quick-simulator">Try Simulator</a>
+        </div>
+      </div>
+    </header>
+
+    <!-- Hero Section -->
+    <section class="hero-section" id="hero">
+      <div class="hero-bg-grid"></div>
+      <div class="hero-bg-glow"></div>
+      <div class="container hero-container">
+        <div class="hero-badge">AI Preconstruction Hub</div>
+        <h1 class="hero-title">
+          The Intelligent Guide to <br/>
+          <span class="text-gradient">AI Quantity Takeoffs</span>
+        </h1>
+        <p class="hero-subtitle">
+          If you are looking for products similar to Togal.AI, several competing preconstruction platforms leverage artificial intelligence, computer vision, and machine learning to automate the digital quantity takeoff process. Explore options, run the interactive simulator, and find your workflow match below.
+        </p>
+        <div class="hero-buttons">
+          <a href="#simulator" class="btn btn-primary btn-lg" id="btn-hero-simulator">
+            <span>Run Takeoff Simulator</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="btn-arrow"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+          </a>
+          <a href="#directory" class="btn btn-secondary btn-lg" id="btn-hero-compare">Compare Alternatives</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Content Area -->
+    <main class="main-content">
+
+      <!-- Section: Interactive Takeoff Simulator -->
+      <section class="simulator-section section-padding" id="simulator">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">AI Takeoff Simulator</h2>
+            <p class="section-desc">Experience how computer vision and machine learning process blueprint geometry in real time. Choose a plan, choose a takeoff mode, and run the simulator.</p>
+          </div>
+
+          <div class="simulator-grid">
+            <!-- Left Side: Controls & Legend -->
+            <div class="simulator-panel panel-controls glass-card">
+              <div class="panel-header">
+                <h3>Simulator Dashboard</h3>
+                <span class="status-indicator idle" id="simulator-status-indicator">Ready</span>
+              </div>
+              
+              <div class="control-group">
+                <label for="select-blueprint">1. Select Sample Floor Plan</label>
+                <select id="select-blueprint" class="form-select">
+                  <option value="office">Commercial Office Space (800 sq ft)</option>
+                  <option value="apartment">Modern 2-Bedroom Apartment (1,200 sq ft)</option>
+                  <option value="retail">Retail Boutique Shop (650 sq ft)</option>
+                  <option value="duplex">Duplex Residential Home (Plan D-577)</option>
+                  <option value="custom">-- Upload Custom Drawing --</option>
+                </select>
+                <div class="custom-file-upload-container" id="custom-file-container" style="display: none; margin-top: 0.75rem;">
+                  <label class="custom-file-upload" style="cursor: pointer; display: block; border: 1.5px dashed var(--slate-border); border-radius: 8px; padding: 0.75rem; text-align: center; background: rgba(255, 255, 255, 0.02); transition: all 0.25s ease;">
+                    <input type="file" id="input-custom-blueprint" accept="image/*" style="display: none;">
+                    <span class="btn btn-secondary btn-sm" style="display: block; margin: 0 auto 0.25rem; pointer-events: none;">Choose Plan Image</span>
+                    <span id="custom-file-name" class="file-name-label" style="font-size: 0.75rem; color: var(--text-muted); word-break: break-all; pointer-events: none;">No image loaded</span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="control-group">
+                <label for="select-engine">2. Emulate AI Engine Profile</label>
+                <select id="select-engine" class="form-select">
+                  <option value="togal">Togal.AI (Fast footprint & room detection)</option>
+                  <option value="kreo">Kreo AI (Precise structural geometry & grouping)</option>
+                  <option value="quotr">Quotr.ai (Takeoff mapped to cost assemblies)</option>
+                  <option value="beam">Beam AI (Rapid area extraction)</option>
+                </select>
+              </div>
+
+              <div class="control-group">
+                <label>3. Select Takeoff Layer</label>
+                <div class="layer-radio-group">
+                  <label class="layer-radio-card active">
+                    <input type="radio" name="takeoff-layer" value="all" checked id="layer-all">
+                    <span class="radio-label">All Layers</span>
+                  </label>
+                  <label class="layer-radio-card">
+                    <input type="radio" name="takeoff-layer" value="areas" id="layer-areas">
+                    <span class="radio-label">Area (Flooring/Drywall)</span>
+                  </label>
+                  <label class="layer-radio-card">
+                    <input type="radio" name="takeoff-layer" value="walls" id="layer-walls">
+                    <span class="radio-label">Linear (Walls/Partitions)</span>
+                  </label>
+                  <label class="layer-radio-card">
+                    <input type="radio" name="takeoff-layer" value="counts" id="layer-counts">
+                    <span class="radio-label">Counts (Doors/Windows)</span>
+                  </label>
+                </div>
+              </div>
+
+              <button class="btn btn-primary btn-block btn-glow" id="btn-run-takeoff">
+                <svg class="icon-play" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <polygon points="5 3 19 12 5 21 5 3" />
+                </svg>
+                <span>Run AI Takeoff Analysis</span>
+              </button>
+
+              <div class="simulator-stats" id="simulator-stats-panel" style="display: flex; flex-direction: column;">
+                <!-- Tab Switching Bar -->
+                <div class="stats-tabs-container" style="display: flex; background: rgba(30, 41, 59, 0.4); border: 1.5px solid var(--slate-border); border-radius: 8px; padding: 2px; margin-bottom: 1rem;">
+                  <button class="stats-tab active" id="btn-tab-qty" style="flex: 1; background: var(--cyan); color: #0f172a; border: none; padding: 0.35rem 0.5rem; border-radius: 6px; font-weight: 600; font-size: 0.75rem; cursor: pointer; transition: all 0.25s;">Quantities</button>
+                  <button class="stats-tab" id="btn-tab-schedule" style="flex: 1; background: transparent; color: var(--text-muted); border: none; padding: 0.35rem 0.5rem; border-radius: 6px; font-weight: 600; font-size: 0.75rem; cursor: pointer; transition: all 0.25s;">Schedules & Specs</button>
+                </div>
+
+                <!-- Tab Content 1: Quantities -->
+                <div id="tab-content-qty" style="display: block;">
+                  <h4 class="stats-title" style="margin-top: 0;">Extracted Quantities</h4>
+                  <div class="stats-grid">
+                    <div class="stat-card">
+                      <span class="stat-label">Total Area</span>
+                      <span class="stat-value" id="stat-total-area">0 <span class="stat-unit">SF</span></span>
+                    </div>
+                    <div class="stat-card">
+                      <span class="stat-label">Linear Walls</span>
+                      <span class="stat-value" id="stat-linear-walls">0 <span class="stat-unit">LF</span></span>
+                    </div>
+                    <div class="stat-card">
+                      <span class="stat-label">Doors Found</span>
+                      <span class="stat-value" id="stat-doors-count">0</span>
+                    </div>
+                    <div class="stat-card">
+                      <span class="stat-label">Windows Found</span>
+                      <span class="stat-value" id="stat-windows-count">0</span>
+                    </div>
+                  </div>
+                  <div class="materials-summary" style="margin-top: 1.25rem;">
+                    <h5>Estimated Material Estimates</h5>
+                    <ul class="material-list" id="material-estimates-list">
+                      <li class="empty-list-msg">Run AI takeoff to generate estimates</li>
+                    </ul>
+                  </div>
+                </div>
+
+                <!-- Tab Content 2: Schedules & Specs -->
+                <div id="tab-content-schedule" style="display: none;">
+                  <h4 class="stats-title" style="margin-top: 0; color: var(--cyan); display: flex; align-items: center; justify-content: space-between;">
+                    <span>Schedules & Specs</span>
+                    <span class="badge" style="font-size: 0.65rem; background: rgba(16, 185, 129, 0.15); color: var(--emerald); border: 1px solid rgba(16, 185, 129, 0.3); padding: 0.15rem 0.4rem; border-radius: 4px;">Dynamic</span>
+                  </h4>
+                  
+                  <div style="display: grid; gap: 1rem; max-height: 480px; overflow-y: auto; padding-right: 0.25rem;">
+                    
+                    <!-- Spec variables feedback -->
+                    <div style="background: rgba(30, 41, 59, 0.3); border: 1px solid var(--slate-border); padding: 0.65rem; border-radius: 8px; font-size: 0.75rem;">
+                      <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                        <span style="color: var(--text-muted);">Floor Multiplier:</span>
+                        <strong id="sched-multiplier" style="color: #ffffff;">1 Floor</strong>
+                      </div>
+                      <div style="display: flex; justify-content: space-between; margin-bottom: 0.25rem;">
+                        <span style="color: var(--text-muted);">Ceiling Partition Height:</span>
+                        <strong id="sched-ceiling" style="color: #ffffff;">10.0 ft</strong>
+                      </div>
+                      <div style="display: flex; justify-content: space-between;">
+                        <span style="color: var(--text-muted);">Stud O.C. Spacing:</span>
+                        <strong id="sched-stud-spacing" style="color: #ffffff;">16 inches</strong>
+                      </div>
+                    </div>
+
+                    <!-- Door Schedule -->
+                    <div>
+                      <h5 style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: space-between;">
+                        <span>Door Schedule</span>
+                        <span id="sched-door-count-badge" class="badge" style="font-size: 0.65rem; background: rgba(59, 130, 246, 0.15); color: #3b82f6; padding: 0.1rem 0.35rem; border-radius: 4px;">0 items</span>
+                      </h5>
+                      <div style="overflow-x: auto; background: rgba(13, 21, 39, 0.4); border: 1px solid var(--slate-border); border-radius: 8px;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.7rem; text-align: left;">
+                          <thead>
+                            <tr style="border-bottom: 1px solid var(--slate-border); background: rgba(30, 41, 59, 0.3);">
+                              <th style="padding: 0.4rem 0.5rem;">Mark</th>
+                              <th style="padding: 0.4rem 0.5rem;">Door Description</th>
+                              <th style="padding: 0.4rem 0.5rem;">Fire Rating</th>
+                              <th style="padding: 0.4rem 0.5rem; text-align: right;">Qty</th>
+                            </tr>
+                          </thead>
+                          <tbody id="sched-door-rows">
+                            <tr>
+                              <td colspan="4" style="padding: 0.75rem; text-align: center; color: var(--text-muted);">Run takeoff to populate door schedule</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <!-- Window Schedule -->
+                    <div>
+                      <h5 style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: space-between;">
+                        <span>Window Schedule</span>
+                        <span id="sched-window-count-badge" class="badge" style="font-size: 0.65rem; background: rgba(59, 130, 246, 0.15); color: #3b82f6; padding: 0.1rem 0.35rem; border-radius: 4px;">0 items</span>
+                      </h5>
+                      <div style="overflow-x: auto; background: rgba(13, 21, 39, 0.4); border: 1px solid var(--slate-border); border-radius: 8px;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.7rem; text-align: left;">
+                          <thead>
+                            <tr style="border-bottom: 1px solid var(--slate-border); background: rgba(30, 41, 59, 0.3);">
+                              <th style="padding: 0.4rem 0.5rem;">Mark</th>
+                              <th style="padding: 0.4rem 0.5rem;">Window Description</th>
+                              <th style="padding: 0.4rem 0.5rem;">Fire Rating</th>
+                              <th style="padding: 0.4rem 0.5rem; text-align: right;">Qty</th>
+                            </tr>
+                          </thead>
+                          <tbody id="sched-window-rows">
+                            <tr>
+                              <td colspan="4" style="padding: 0.75rem; text-align: center; color: var(--text-muted);">Run takeoff to populate window schedule</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                    <!-- Partition Walls Schedule & Fire Ratings -->
+                    <div>
+                      <h5 style="font-size: 0.75rem; text-transform: uppercase; color: var(--text-muted); margin-bottom: 0.5rem; letter-spacing: 0.05em;">Partition Wall Types & Fire Ratings</h5>
+                      <div style="overflow-x: auto; background: rgba(13, 21, 39, 0.4); border: 1px solid var(--slate-border); border-radius: 8px;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.7rem; text-align: left;">
+                          <thead>
+                            <tr style="border-bottom: 1px solid var(--slate-border); background: rgba(30, 41, 59, 0.3);">
+                              <th style="padding: 0.4rem 0.5rem;">Type</th>
+                              <th style="padding: 0.4rem 0.5rem;">Wall Configuration</th>
+                              <th style="padding: 0.4rem 0.5rem;">Fire Rating</th>
+                              <th style="padding: 0.4rem 0.5rem; text-align: right;">Perimeter / LF</th>
+                            </tr>
+                          </thead>
+                          <tbody id="sched-wall-rows">
+                            <tr>
+                              <td colspan="4" style="padding: 0.75rem; text-align: center; color: var(--text-muted);">Run takeoff to populate partition schedule</td>
+                            </tr>
+                          </tbody>
+                        </table>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Right Side: Interactive Drawing Board (Bluebeam Revu Studio Layout) -->
+            <div class="simulator-panel panel-canvas glass-card bluebeam-workspace" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+              
+              <!-- 1. Top Bluebeam Header & Menu Ribbon -->
+              <div class="bluebeam-topbar" style="background: #090e1a; border-bottom: 1.5px solid var(--slate-border); display: flex; flex-direction: column; position: relative; z-index: 100; overflow: visible;">
+                <div class="bluebeam-menubar" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.35rem 0.75rem; font-size: 0.75rem; font-family: var(--font-sans); background: rgba(15, 23, 42, 0.8); border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 101; overflow: visible;">
+                  <div class="bluebeam-menu-logo" style="display: flex; align-items: center; gap: 0.35rem; margin-right: 0.5rem;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" style="width: 1rem; height: 1rem;"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 7h10v10H7z"/></svg>
+                    <span style="font-weight: 800; letter-spacing: 0.5px; color: #ffffff;">REVU</span>
+                  </div>
+                  <div class="bluebeam-menu-item" id="menu-file" style="color: var(--text-muted); cursor: pointer; position: relative; padding: 0.15rem 0.45rem; border-radius: 3px; transition: all 0.2s;">File ▾
+                    <div class="bluebeam-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #0f172a; border: 1.5px solid var(--slate-border); border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; min-width: 190px; padding: 0.3rem 0;">
+                      <div class="dropdown-item" id="dropdown-export-summary" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📄 Export Markups Summary</div>
+                      <div class="dropdown-item" id="dropdown-flatten-markups" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🔒 Flatten Markups Layer</div>
+                      <div class="dropdown-item" id="dropdown-print" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🖨️ Print Blueprint View</div>
+                    </div>
+                  </div>
+                  <div class="bluebeam-menu-item" id="menu-edit" style="color: var(--text-muted); cursor: pointer; position: relative; padding: 0.15rem 0.45rem; border-radius: 3px; transition: all 0.2s;">Edit ▾
+                    <div class="bluebeam-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #0f172a; border: 1.5px solid var(--slate-border); border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; min-width: 180px; padding: 0.3rem 0;">
+                      <div class="dropdown-item" id="dropdown-edit-undo" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">↩️ Undo Point</div>
+                      <div class="dropdown-item" id="dropdown-edit-clear" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🗑️ Clear Markups</div>
+                      <div class="dropdown-item" id="dropdown-edit-selectall" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🎯 Select All Rooms</div>
+                    </div>
+                  </div>
+                  <div class="bluebeam-menu-item" id="menu-view" style="color: var(--text-muted); cursor: pointer; position: relative; padding: 0.15rem 0.45rem; border-radius: 3px; transition: all 0.2s;">View ▾
+                    <div class="bluebeam-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #0f172a; border: 1.5px solid var(--slate-border); border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; min-width: 180px; padding: 0.3rem 0;">
+                      <div class="dropdown-item" id="dropdown-view-zoomin" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">➕ Zoom In</div>
+                      <div class="dropdown-item" id="dropdown-view-zoomout" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">➖ Zoom Out</div>
+                      <div class="dropdown-item" id="dropdown-view-reset" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">⟲ Reset View</div>
+                      <div class="dropdown-item" id="dropdown-view-fullscreen" style="padding: 0.4rem 0.8rem; color: var(--cyan); cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">⛶ Toggle Fullscreen</div>
+                    </div>
+                  </div>
+                  <div class="bluebeam-menu-item" id="menu-document" style="color: var(--text-muted); cursor: pointer; position: relative; padding: 0.15rem 0.45rem; border-radius: 3px; transition: all 0.2s;">Document ▾
+                    <div class="bluebeam-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #0f172a; border: 1.5px solid var(--slate-border); border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; min-width: 180px; padding: 0.3rem 0;">
+                      <div class="dropdown-item" id="dropdown-doc-scale" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📐 Scale Setup</div>
+                      <div class="dropdown-item" id="dropdown-doc-rotate" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🔄 Rotate Canvas 90°</div>
+                    </div>
+                  </div>
+                  <div class="bluebeam-menu-item" id="menu-tools" style="color: var(--text-muted); cursor: pointer; position: relative; padding: 0.15rem 0.45rem; border-radius: 3px; transition: all 0.2s;">Tools ▾
+                    <div class="bluebeam-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #0f172a; border: 1.5px solid var(--slate-border); border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; min-width: 190px; padding: 0.3rem 0;">
+                      <div class="dropdown-item" id="dropdown-tools-select" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">↖️ Select / Edit Tool</div>
+                      <div class="dropdown-item" id="dropdown-tools-area" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📐 Area Takeoff (SF)</div>
+                      <div class="dropdown-item" id="dropdown-tools-wall" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📏 Wall Linear (LF)</div>
+                      <div class="dropdown-item" id="dropdown-tools-count" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🔘 Fixture Count</div>
+                      <div class="dropdown-item" id="dropdown-df-launch" style="padding: 0.4rem 0.8rem; color: var(--cyan); cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🪣 Dynamic Fill...</div>
+                      <div class="dropdown-item" id="dropdown-calibrate" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📐 Calibrate Scale</div>
+                    </div>
+                  </div>
+                  <div class="bluebeam-menu-item" id="menu-window" style="color: var(--text-muted); cursor: pointer; position: relative; padding: 0.15rem 0.45rem; border-radius: 3px; transition: all 0.2s;">Window ▾
+                    <div class="bluebeam-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #0f172a; border: 1.5px solid var(--slate-border); border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; min-width: 195px; padding: 0.3rem 0;">
+                      <div class="dropdown-item" id="dropdown-win-toolchest" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🧰 Tool Chest</div>
+                      <div class="dropdown-item" id="dropdown-win-measurements" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📐 Measurements</div>
+                      <div class="dropdown-item" id="dropdown-win-properties" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">⚙️ Markup Properties</div>
+                      <div class="dropdown-item" id="dropdown-win-markupslist" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📋 Markups List</div>
+                      <div class="dropdown-item" id="dropdown-win-togglesidebar" style="padding: 0.4rem 0.8rem; color: var(--cyan); cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🖼️ Toggle Sidebar Panel</div>
+                    </div>
+                  </div>
+                  <div class="bluebeam-menu-item" id="menu-help" style="color: var(--text-muted); cursor: pointer; position: relative; padding: 0.15rem 0.45rem; border-radius: 3px; transition: all 0.2s;">Help ▾
+                    <div class="bluebeam-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #0f172a; border: 1.5px solid var(--slate-border); border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; min-width: 180px; padding: 0.3rem 0;">
+                      <div class="dropdown-item" id="dropdown-help-guide" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📖 Revu User Guide</div>
+                      <div class="dropdown-item" id="dropdown-help-shortcuts" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">⌨️ Keyboard Shortcuts</div>
+                    </div>
+                  </div>
+
+                  <button id="btn-bluebeam-fullscreen" class="bluebeam-fullscreen-btn" title="Toggle Fullscreen Blueprint Workspace" style="margin-left: auto; background: rgba(6,182,212,0.15); border: 1px solid var(--cyan); color: var(--cyan); border-radius: 4px; padding: 0.2rem 0.55rem; font-size: 0.7rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; transition: all 0.2s;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.85rem; height: 0.85rem;"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                    <span>Fullscreen</span>
+                  </button>
+                </div>
+                
+                <!-- Active Document Tab Strip -->
+                <div class="bluebeam-doc-tabs" style="display: flex; align-items: center; background: #0b1120; padding: 0.25rem 0.5rem 0 0.5rem; gap: 0.25rem;">
+                  <div class="bluebeam-doc-tab active" id="doc-tab-title" style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid var(--slate-border); border-bottom: none; border-radius: 6px 6px 0 0; padding: 0.35rem 0.75rem; font-size: 0.75rem; color: #ffffff; display: flex; align-items: center; gap: 0.4rem; font-family: var(--font-sans); font-weight: 600;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" style="width:0.85rem; height:0.85rem;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span id="bb-doc-name">Duplex Residential Home (Plan D-577)</span>
+                    <span class="bb-doc-page" style="background: rgba(99,102,241,0.2); color: var(--indigo-light); font-size: 0.65rem; padding: 0.1rem 0.3rem; border-radius: 3px; margin-left: 0.25rem;">Page 1/1</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 2. Main Bluebeam Workspace Body (Sidebar Dock + Sub-Panels + Canvas) -->
+              <div class="bluebeam-workspace-body" style="display: flex; flex: 1; position: relative; min-height: 480px;">
+                <!-- Left Icon Navigation Dock (Bluebeam Revu Style Tabs) -->
+                <div class="bluebeam-sidebar-dock" style="width: 48px; background: #070c17; border-right: 1.5px solid var(--slate-border); display: flex; flex-direction: column; align-items: center; padding: 0.5rem 0; gap: 0.5rem; z-index: 20;">
+                  <button class="bb-dock-btn active" data-tab="toolchest" title="Tool Chest (Takeoff Tools & Presets)" style="width: 36px; height: 36px; border-radius: 6px; border: 1.5px solid transparent; background: none; color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; transition: all 0.2s;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1.1rem; height: 1.1rem;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                  </button>
+                  <button class="bb-dock-btn" data-tab="measurements" title="Measurements & Scale Calibration" style="width: 36px; height: 36px; border-radius: 6px; border: 1.5px solid transparent; background: none; color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; transition: all 0.2s;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1.1rem; height: 1.1rem;"><path d="M2 12h20M6 12v-4M10 12v-2M14 12v-4M18 12v-2"/></svg>
+                  </button>
+                  <button class="bb-dock-btn" data-tab="properties" title="Markup Properties Panel" style="width: 36px; height: 36px; border-radius: 6px; border: 1.5px solid transparent; background: none; color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; transition: all 0.2s;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1.1rem; height: 1.1rem;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  </button>
+                  <button class="bb-dock-btn" data-tab="markupslist" title="Markups List (Quantity Takeoff Table)" style="width: 36px; height: 36px; border-radius: 6px; border: 1.5px solid transparent; background: none; color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; transition: all 0.2s;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1.1rem; height: 1.1rem;"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                  </button>
+                  <button class="bb-dock-btn" data-tab="thumbnails" title="Documents & Thumbnails" style="width: 36px; height: 36px; border-radius: 6px; border: 1.5px solid transparent; background: none; color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; transition: all 0.2s;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1.1rem; height: 1.1rem;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
+                  </button>
+                </div>
+
+                <!-- Sub-Panels Container (Docked next to sidebar) -->
+                <div class="bluebeam-panel-container" id="bb-panel-container" style="width: 260px; background: rgba(11, 17, 32, 0.95); backdrop-filter: blur(10px); border-right: 1.5px solid var(--slate-border); display: flex; flex-direction: column; z-index: 15;">
+                  
+                  <!-- 1. Tool Chest Panel -->
+                  <div class="bb-panel active" id="bb-panel-toolchest" style="display: flex; flex-direction: column; height: 100%; padding: 0.75rem; gap: 0.75rem;">
+                    <div class="bb-panel-header" style="font-size: 0.8rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center; font-family: var(--font-sans);">
+                      <span>🧰 Tool Chest</span>
+                    </div>
+                    <div class="bb-panel-body" style="display: flex; flex-direction: column; gap: 0.85rem; overflow-y: auto;">
+                      <div class="bb-tool-group">
+                        <div class="bb-tool-group-header" style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 0.4rem;">📐 General Measurements</div>
+                        <div class="bb-tool-grid" style="display: flex; flex-direction: column; gap: 0.35rem;">
+                          <div class="bb-tool-item" id="tool-item-area" data-tool="area" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(30,41,59,0.5); border: 1px solid var(--slate-border); border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: #fff; transition: all 0.2s;">
+                            <span class="bb-tool-icon" style="width: 12px; height: 12px; border-radius: 2px; border: 1.5px solid #6366f1; background: rgba(99,102,241,0.3);"></span>
+                            <span class="bb-tool-label">Area (SF)</span>
+                          </div>
+                          <div class="bb-tool-item" id="tool-item-wall" data-tool="wall" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(30,41,59,0.5); border: 1px solid var(--slate-border); border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: #fff; transition: all 0.2s;">
+                            <span class="bb-tool-icon" style="width: 12px; height: 2px; background: #38bdf8;"></span>
+                            <span class="bb-tool-label">Wall Linear (LF)</span>
+                          </div>
+                          <div class="bb-tool-item" id="tool-item-count" data-tool="point" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(30,41,59,0.5); border: 1px solid var(--slate-border); border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: #fff; transition: all 0.2s;">
+                            <span class="bb-tool-icon" style="width: 10px; height: 10px; border-radius: 50%; background: #06b6d4;"></span>
+                            <span class="bb-tool-label">Fixture Count</span>
+                          </div>
+                          <div class="bb-tool-item" id="tool-item-dynamic-fill" data-tool="dynamicfill" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(6,182,212,0.15); border: 1px solid var(--cyan); border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: var(--cyan); font-weight: 600; transition: all 0.2s;">
+                            <span class="bb-tool-icon" style="display: flex; align-items: center; justify-content: center;">🪣</span>
+                            <span class="bb-tool-label">Dynamic Fill...</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="bb-tool-group">
+                        <div class="bb-tool-group-header" style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 0.4rem;">🏗️ Construction Assemblies</div>
+                        <div class="bb-tool-grid" style="display: flex; flex-direction: column; gap: 0.35rem;">
+                          <div class="bb-tool-item" data-tool="preset-drywall" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(30,41,59,0.5); border: 1px solid var(--slate-border); border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: #fff;">
+                            <span class="bb-tool-icon" style="width: 12px; height: 12px; border-radius: 2px; border: 1.5px solid #f59e0b; background: rgba(245,158,11,0.3);"></span>
+                            <span class="bb-tool-label">Drywall Partition</span>
+                          </div>
+                          <div class="bb-tool-item" data-tool="preset-flooring" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(30,41,59,0.5); border: 1px solid var(--slate-border); border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: #fff;">
+                            <span class="bb-tool-icon" style="width: 12px; height: 12px; border-radius: 2px; border: 1.5px solid #10b981; background: rgba(16,185,129,0.3);"></span>
+                            <span class="bb-tool-label">Flooring Finish</span>
+                          </div>
+                          <div class="bb-tool-item" data-tool="preset-concrete" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(30,41,59,0.5); border: 1px solid var(--slate-border); border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: #fff;">
+                            <span class="bb-tool-icon" style="width: 12px; height: 12px; border-radius: 2px; border: 1.5px solid #94a3b8; background: rgba(148,163,184,0.3);"></span>
+                            <span class="bb-tool-label">Concrete Slab</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 2. Measurements & Scale Panel -->
+                  <div class="bb-panel" id="bb-panel-measurements" style="display: none; flex-direction: column; height: 100%; padding: 0.75rem; gap: 0.75rem;">
+                    <div class="bb-panel-header" style="font-size: 0.8rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.4rem; font-family: var(--font-sans);">
+                      <span>📐 Measurements & Scale</span>
+                    </div>
+                    <div class="bb-panel-body" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                      <div class="bb-form-group" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                        <label style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">Blueprint Scale</label>
+                        <select id="bb-scale-select" style="background: #1e293b; border: 1.5px solid var(--slate-border); border-radius: 4px; padding: 0.35rem 0.5rem; color: #fff; font-size: 0.75rem; outline: none;">
+                          <option value="0.25">1/4" = 1'-0" (Standard Residential)</option>
+                          <option value="0.125">1/8" = 1'-0" (Commercial Blueprint)</option>
+                          <option value="0.5">1/2" = 1'-0" (Detail Elevation)</option>
+                        </select>
+                      </div>
+                      <button id="btn-calibrate-scale" style="background: rgba(99,102,241,0.15); border: 1.5px solid var(--indigo); border-radius: 4px; color: var(--indigo-light); font-size: 0.75rem; font-weight: 600; padding: 0.4rem; cursor: pointer; transition: all 0.2s;">
+                        📐 Calibrate Scale
+                      </button>
+                      <div class="bb-summary-box" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.75rem;">
+                        <div style="display: flex; justify-content: space-between;"><span>Total Area:</span><strong id="bb-total-area-val" style="color:var(--cyan);">0 SF</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Total Walls:</span><strong id="bb-total-wall-val" style="color:var(--amber);">0 LF</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Openings:</span><strong id="bb-total-count-val" style="color:#ffffff;">0</strong></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- 3. Properties Panel -->
+                  <div class="bb-panel" id="bb-panel-properties" style="display: none; flex-direction: column; height: 100%; padding: 0.75rem; gap: 0.75rem;">
+                    <div class="bb-panel-header" style="font-size: 0.8rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.4rem; font-family: var(--font-sans);">
+                      <span>⚙️ Markup Properties</span>
+                    </div>
+                    <div class="bb-panel-body" id="bb-properties-body-content" style="display: flex; flex-direction: column; gap: 0.6rem;">
+                      <p style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">Select any room or markup on the canvas to edit its properties.</p>
+                    </div>
+                  </div>
+
+                  <!-- 4. Markups List Panel -->
+                  <div class="bb-panel" id="bb-panel-markupslist" style="display: none; flex-direction: column; height: 100%; padding: 0.75rem; gap: 0.75rem;">
+                    <div class="bb-panel-header" style="font-size: 0.8rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center; font-family: var(--font-sans);">
+                      <span>📋 Markups List</span>
+                      <button id="btn-export-markups-csv" style="background: rgba(16,185,129,0.15); border: 1px solid var(--emerald); border-radius: 4px; color: var(--emerald); font-size: 0.65rem; font-weight: 600; padding: 0.2rem 0.4rem; cursor: pointer;">CSV</button>
+                    </div>
+                    <div class="bb-panel-body" style="display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto;">
+                      <table class="bb-markups-table" style="width: 100%; border-collapse: collapse; font-size: 0.7rem; color: #fff;">
+                        <thead>
+                          <tr style="border-bottom: 1px solid var(--slate-border); text-align: left; color: var(--text-muted);">
+                            <th style="padding: 0.3rem;">Subject</th>
+                            <th style="padding: 0.3rem;">Area</th>
+                            <th style="padding: 0.3rem;">Walls</th>
+                          </tr>
+                        </thead>
+                        <tbody id="bb-markups-tbody">
+                          <tr><td colspan="3" style="padding: 0.5rem; text-align: center; color: var(--text-muted);">No active markups</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <!-- 5. Documents / Thumbnails Panel -->
+                  <div class="bb-panel" id="bb-panel-thumbnails" style="display: none; flex-direction: column; height: 100%; padding: 0.75rem; gap: 0.75rem;">
+                    <div class="bb-panel-header" style="font-size: 0.8rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.4rem; font-family: var(--font-sans);">
+                      <span>📁 Documents & Layers</span>
+                    </div>
+                    <div class="bb-panel-body" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                      <div class="bb-form-group" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                        <label style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">Floorplan Preset</label>
+                        <select id="bb-preset-select" style="background: #1e293b; border: 1.5px solid var(--slate-border); border-radius: 4px; padding: 0.35rem 0.5rem; color: #fff; font-size: 0.75rem; outline: none;">
+                          <option value="duplex">Duplex Residential Home (Plan D-577)</option>
+                          <option value="commercial">Commercial Office Space</option>
+                          <option value="warehouse">Industrial Warehouse</option>
+                        </select>
+                      </div>
+                      <div class="bb-form-group" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                        <label style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">Background Image Opacity</label>
+                        <input type="range" id="bb-bg-opacity" min="0.1" max="1" step="0.05" value="0.55" style="width: 100%;">
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Center Canvas Area -->
+                <div class="bluebeam-canvas-area" style="flex: 1; position: relative; display: flex; flex-direction: column; background: #070c17;">
+                  <div class="canvas-header" style="padding: 0.5rem 1rem; border-bottom: 1px solid var(--slate-border); display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.5);">
+                    <div class="canvas-title">
+                      <span class="title-main" id="canvas-blueprint-title" style="font-size: 0.9rem; font-weight: 700; color: #fff;">Duplex Residential Home (Plan D-577)</span>
+                      <span class="title-sub" id="canvas-blueprint-engine" style="font-size: 0.75rem; color: var(--cyan); margin-left: 0.5rem;">Engine: Togal.AI</span>
+                    </div>
+                    <div class="canvas-actions" style="display: flex; gap: 0.5rem; align-items: center;">
+                      <!-- Vector Markup Controls -->
+                      <div class="markup-tools" style="display: flex; gap: 0.25rem; border-right: 1.5px solid var(--slate-border); padding-right: 0.75rem; margin-right: 0.25rem;">
+                        <button class="canvas-btn markup-tool-btn active" id="btn-markup-select" title="Select / Edit Takeoffs & Markups" style="display: flex; align-items: center; justify-content: center;">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.9rem; height: 0.9rem;">
+                            <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />
+                            <path d="M13 13l6 6" />
+                          </svg>
+                        </button>
+                        <button class="canvas-btn markup-tool-btn" id="btn-markup-area" title="Add Area Boundary" style="display: flex; align-items: center; justify-content: center;">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.9rem; height: 0.9rem;"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" /></svg>
+                        </button>
+                        <button class="canvas-btn markup-tool-btn" id="btn-markup-point" title="Count Fixture" style="display: flex; align-items: center; justify-content: center;">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.9rem; height: 0.9rem;"><circle cx="12" cy="12" r="10" /><path d="M12 8v8M8 12h8" /></svg>
+                        </button>
+                        <button class="canvas-btn markup-tool-btn" id="btn-markup-clear" title="Clear Manual Markups" style="color: var(--rose); display: flex; align-items: center; justify-content: center;">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.9rem; height: 0.9rem;"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" /></svg>
+                        </button>
+                      </div>
+                      <button class="canvas-btn" id="btn-zoom-in" title="Zoom In">+</button>
+                      <button class="canvas-btn" id="btn-zoom-out" title="Zoom Out">-</button>
+                      <button class="canvas-btn" id="btn-reset-canvas" title="Reset View">⟲</button>
+                      <button class="canvas-btn" id="btn-canvas-fullscreen" title="Toggle Fullscreen Editor View" style="color: var(--cyan);">⛶</button>
+                    </div>
+                  </div>
+
+                  <!-- Contextual Top Toolbar: Markup Properties (Bluebeam Standard Ribbon Toolbar) -->
+                  <div class="canvas-properties-toolbar" id="canvas-properties-card" style="display: none; background: #0f172a; border-bottom: 1.5px solid var(--cyan); padding: 0.4rem 1rem; font-family: var(--font-sans); color: #fff; z-index: 90; box-shadow: 0 4px 15px rgba(0,0,0,0.4); align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                      <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; font-weight: 700; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.5px; border-right: 1px solid var(--slate-border); padding-right: 0.75rem;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.85rem; height: 0.85rem;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        <span>Markup Properties</span>
+                      </div>
+
+                      <!-- Name / Label Input -->
+                      <div style="display: flex; align-items: center; gap: 0.35rem;">
+                        <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Name:</label>
+                        <input type="text" id="prop-markup-name" placeholder="Markup Label" style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid var(--slate-border); border-radius: 4px; padding: 0.25rem 0.5rem; color: #ffffff; font-size: 0.75rem; outline: none; width: 140px;" />
+                      </div>
+
+                      <!-- Color Pickers -->
+                      <div style="display: flex; align-items: center; gap: 0.6rem; border-left: 1px solid var(--slate-border); padding-left: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.3rem;" title="Fill Color">
+                          <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Fill:</label>
+                          <input type="color" id="prop-markup-fill" style="width: 24px; height: 24px; border: 1px solid var(--slate-border); border-radius: 4px; background: none; cursor: pointer; padding: 0; outline: none;" />
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.3rem;" title="Border Color">
+                          <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Border:</label>
+                          <input type="color" id="prop-markup-border" style="width: 24px; height: 24px; border: 1px solid var(--slate-border); border-radius: 4px; background: none; cursor: pointer; padding: 0; outline: none;" />
+                        </div>
+                      </div>
+
+                      <!-- Measurements Readout -->
+                      <div style="display: flex; align-items: center; gap: 0.8rem; background: rgba(255,255,255,0.03); border-radius: 4px; padding: 0.2rem 0.6rem; border: 1px solid rgba(255,255,255,0.06);">
+                        <div style="display: flex; align-items: center; gap: 0.3rem;">
+                          <span style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase;">Area:</span>
+                          <span id="prop-markup-area" style="font-size: 0.78rem; font-weight: 700; color: var(--cyan);">0 SF</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.3rem; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 0.6rem;">
+                          <span style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase;">Perim:</span>
+                          <span id="prop-markup-perimeter" style="font-size: 0.78rem; font-weight: 700; color: var(--amber);">0 LF</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                      <button id="btn-add-vertex-point" title="Add vertex point to perimeter" style="background: rgba(99, 102, 241, 0.15); border: 1px solid var(--indigo); border-radius: 4px; color: var(--indigo-light); font-size: 0.7rem; font-weight: 600; padding: 0.25rem 0.55rem; cursor: pointer; display: flex; align-items: center; gap: 0.25rem;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.75rem; height: 0.75rem;"><path d="M12 5v14M5 12h14"/></svg>
+                        + Vertex
+                      </button>
+                      <button id="btn-delete-markup" title="Delete selected markup" style="background: rgba(244, 63, 94, 0.15); border: 1px solid var(--rose); border-radius: 4px; color: var(--rose); font-size: 0.7rem; font-weight: 600; padding: 0.25rem 0.55rem; cursor: pointer; display: flex; align-items: center; gap: 0.25rem;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.75rem; height: 0.75rem;"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        Delete
+                      </button>
+                      <button id="btn-close-properties" title="Close Properties Toolbar" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.95rem; padding: 0 0.2rem; line-height: 1;">
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="canvas-body" id="blueprint-canvas-container" style="flex: 1; position: relative;">
+                    <!-- Floating Dynamic Fill Toolbar (Bluebeam Revu Standard) -->
+                    <div class="bluebeam-dynamic-fill-bar" id="bb-dynamic-fill-bar" style="display: none; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 100; background: #0f172a; border: 1.5px solid var(--cyan); border-radius: 8px; box-shadow: 0 12px 35px rgba(0,0,0,0.6); padding: 0.4rem 0.75rem; font-family: var(--font-sans); color: #fff;">
+                      <div style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.35rem; font-weight: 700; color: var(--cyan); border-right: 1px solid var(--slate-border); padding-right: 0.6rem;">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:0.9rem; height:0.9rem;"><path d="M19 11l-8-8-8.6 8.6a2 2 0 0 0 0 2.83l5.17 5.17a2 2 0 0 0 2.83 0L19 11z"/><path d="M5 2v2"/><path d="M19 13l-4 4"/></svg>
+                          <span>Dynamic Fill</span>
+                        </div>
+                        
+                        <!-- Action Tools -->
+                        <div style="display: flex; gap: 0.25rem; border-right: 1px solid var(--slate-border); padding-right: 0.6rem;">
+                          <button class="df-tool-btn active" id="btn-df-fill" title="Paint Fill Bucket (Click inside enclosed room area to flood fill)" style="background: rgba(6,182,212,0.2); border: 1px solid var(--cyan); color: var(--cyan); padding: 0.25rem 0.55rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.3rem;">
+                            🪣 Add Fill
+                          </button>
+                          <button class="df-tool-btn" id="btn-df-boundary" title="Add Boundary Line (Draw temporary barrier line)" style="background: rgba(30,41,59,0.6); border: 1px solid var(--slate-border); color: #fff; padding: 0.25rem 0.55rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.3rem;">
+                            ✏️ Add Boundary
+                          </button>
+                        </div>
+
+                        <!-- Output Markups Selection Toggles -->
+                        <div style="display: flex; align-items: center; gap: 0.4rem; border-right: 1px solid var(--slate-border); padding-right: 0.6rem;">
+                          <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Create:</span>
+                          <label style="display: flex; align-items: center; gap: 0.2rem; cursor: pointer; font-size: 0.7rem; color: #fff;">
+                            <input type="checkbox" id="df-opt-space" checked style="accent-color: var(--cyan);"> Space
+                          </label>
+                          <label style="display: flex; align-items: center; gap: 0.2rem; cursor: pointer; font-size: 0.7rem; color: #fff;">
+                            <input type="checkbox" id="df-opt-area" checked style="accent-color: var(--indigo);"> Area
+                          </label>
+                          <label style="display: flex; align-items: center; gap: 0.2rem; cursor: pointer; font-size: 0.7rem; color: #fff;">
+                            <input type="checkbox" id="df-opt-poly" checked style="accent-color: var(--amber);"> Wall
+                          </label>
+                        </div>
+
+                        <!-- Controls & Actions -->
+                        <div style="display: flex; align-items: center; gap: 0.35rem;">
+                          <button id="btn-df-clear" title="Clear Temporary Fills & Boundaries" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); color: #f87171; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; cursor: pointer;">
+                            🧹 Clear
+                          </button>
+                          <button id="btn-df-apply" title="Apply Dynamic Fill to create markups" style="background: var(--emerald); border: none; color: #000; padding: 0.25rem 0.65rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; cursor: pointer;">
+                            ✓ Apply
+                          </button>
+                          <button id="btn-df-close" title="Close Dynamic Fill Toolbar" style="background: none; border: none; color: var(--text-muted); font-size: 0.9rem; cursor: pointer; margin-left: 0.2rem;">
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- SVG Blueprint Content (will be dynamically updated / controlled via JS) -->
+                    <svg id="blueprint-svg" viewBox="0 0 800 500" class="blueprint-vector">
+                      <!-- Definitions for grid pattern, gradients, and filters -->
+                      <defs>
+                        <pattern id="grid-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1" />
+                        </pattern>
+                        <filter id="neon-glow" x="-10%" y="-10%" width="120%" height="120%">
+                          <feGaussianBlur stdDeviation="3" result="blur" />
+                          <feMerge>
+                            <feMergeNode in="blur" />
+                            <feMergeNode in="SourceGraphic" />
+                          </feMerge>
+                        </filter>
+                      </defs>
+                      
+                      <!-- Grid Background -->
+                      <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+                      
+                      <!-- Scanner Line Overlay (Animated via JS) -->
+                      <line id="scanner-line" x1="0" y1="0" x2="800" y2="0" stroke="#00f2fe" stroke-width="2" style="display: none; filter: url(#neon-glow);" />
+                      
+                      <!-- Blueprint Drawings will be generated by js in the main script -->
+                      <g id="blueprint-drawings-group"></g>
+                      
+                      <!-- AI Highlight Overlays -->
+                      <g id="ai-highlights-group"></g>
+
+                      <!-- Tooltips overlay -->
+                      <g id="canvas-tooltips-group"></g>
+
+                      <!-- Markup Selection Overlay (handles, outlines) -->
+                      <g id="markup-selection-group"></g>
+                    </svg>
+
+                    <div class="canvas-overlay-message" id="canvas-prompt-overlay">
+                      <div class="overlay-content">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="overlay-icon">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                          <line x1="9" y1="3" x2="9" y2="21" />
+                          <line x1="15" y1="3" x2="15" y2="21" />
+                          <line x1="3" y1="9" x2="21" y2="9" />
+                          <line x1="3" y1="15" x2="21" y2="15" />
+                        </svg>
+                        <h4>Interactive Takeoff Ready</h4>
+                        <p>Click "Run AI Takeoff Analysis" to start the computer vision parser.</p>
+                      </div>
+                    </div>
+
+                    <!-- Live tooltip box -->
+                    <div class="html-tooltip" id="canvas-html-tooltip"></div>
+
+                    <!-- Floating Canvas Takeoff Legend -->
+                    <div class="canvas-takeoff-legend" id="canvas-legend" style="position: absolute; bottom: 1rem; right: 1rem; background: rgba(13, 21, 39, 0.85); backdrop-filter: blur(10px); border: 1.5px solid var(--slate-border); border-radius: 8px; padding: 0.75rem; z-index: 10; display: none; flex-direction: column; gap: 0.5rem; transition: all 0.3s ease;">
+                      <div style="font-size: 0.75rem; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.25rem; margin-bottom: 0.25rem; font-family: var(--font-sans);">Takeoff Legend</div>
+                      <div class="legend-item" data-target-layer="areas" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(99, 102, 241, 0.5); border: 1px solid #6366f1;"></span>
+                        <span>Measured Areas (Rooms)</span>
+                      </div>
+                      <div class="legend-item" data-target-layer="walls" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
+                        <span style="width: 10px; height: 1.5px; background: #334155;"></span>
+                        <span>Interior Walls (LF)</span>
+                      </div>
+                      <div class="legend-item" data-target-layer="counts" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #06b6d4; border: 1px solid #ffffff;"></span>
+                        <span>Doors & Openings</span>
+                      </div>
+                      <div class="legend-item" data-target-layer="counts" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #f59e0b; border: 1px solid #ffffff;"></span>
+                        <span>Window Openings</span>
+                      </div>
+                      <div class="legend-item" data-target-layer="manual" id="legend-manual-item" style="display: none; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(16, 185, 129, 0.4); border: 1.5px dashed var(--emerald);"></span>
+                        <span>Manual Markups</span>
+                      </div>
+                      <div style="font-size: 0.65rem; color: var(--text-muted); font-style: italic; border-top: 1.5px solid rgba(255,255,255,0.08); padding-top: 0.25rem; margin-top: 0.25rem; font-family: var(--font-sans);">Hover to isolate layer</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Bottom Bluebeam Revu Status Dock -->
+              <div class="bluebeam-statusbar" style="background: #090e1a; border-top: 1.5px solid var(--slate-border); padding: 0.35rem 0.85rem; font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; font-family: var(--font-sans);">
+                <div class="bb-status-left" style="display: flex; align-items: center; gap: 0.75rem;">
+                  <span class="bb-status-pill" id="bb-scale-pill" style="background: rgba(99,102,241,0.15); color: var(--indigo-light); padding: 0.15rem 0.4rem; border-radius: 3px; border: 1px solid var(--indigo); font-size: 0.68rem; font-weight: 600;">Scale: 1/4" = 1'-0"</span>
+                  <span class="bb-status-pill" id="bb-coords-pill" style="font-family: monospace;">X: 0 px, Y: 0 px</span>
+                </div>
+                <div class="bb-status-center" style="display: flex; align-items: center; gap: 0.5rem;">
+                  <button class="bb-status-toggle active" id="toggle-snap-grid" style="background: rgba(16,185,129,0.15); border: 1px solid var(--emerald); color: var(--emerald); padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.65rem; font-weight: 600; cursor: pointer;">⚡ Snap Grid</button>
+                  <button class="bb-status-toggle active" id="toggle-snap-markup" style="background: rgba(6,182,212,0.15); border: 1px solid var(--cyan); color: var(--cyan); padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.65rem; font-weight: 600; cursor: pointer;">🧲 Snap Edge</button>
+                  <button class="bb-status-toggle active" id="toggle-ortho-lock" style="background: rgba(245,158,11,0.15); border: 1px solid var(--amber); color: var(--amber); padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.65rem; font-weight: 600; cursor: pointer;">📐 Ortho (Shift)</button>
+                </div>
+                <div class="bb-status-right" style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="color: var(--emerald); font-weight: 600;">● Bluebeam Revu Mode Active</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Component 1: Assembly Configuration Console & Regional Escalator -->
+          <div class="assembly-pricing-console glass-card" id="assembly-console" style="margin-top: 2.5rem; border-top: 1px solid var(--accent-gradient-start);">
+            <div class="panel-header" style="border-bottom: 1.5px solid var(--slate-border); padding-bottom: 1rem; margin-bottom: 1.5rem; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 0.75rem;">
+              <h3 style="font-size: 1.35rem; font-weight: 700; color: #ffffff; display: flex; align-items: center; gap: 0.5rem; margin: 0;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" style="width: 1.5rem; height: 1.5rem;"><rect x="4" y="4" width="16" height="16" rx="2" /><line x1="9" y1="9" x2="15" y2="9" /><line x1="9" y1="13" x2="15" y2="13" /><line x1="9" y1="17" x2="13" y2="17" /></svg>
+                Assembly Cost Estimator & Regional Escalator
+              </h3>
+              <div style="display: flex; align-items: center; gap: 1rem;">
+                <div class="scenario-tabs-container" style="display: flex; background: rgba(30, 41, 59, 0.5); border: 1.5px solid var(--slate-border); border-radius: 8px; padding: 2px;">
+                  <button class="scenario-tab active" id="btn-scenario-a" style="background: var(--cyan); color: #0f172a; border: none; padding: 0.25rem 0.75rem; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.25s;">Scenario A</button>
+                  <button class="scenario-tab" id="btn-scenario-b" style="background: transparent; color: var(--text-muted); border: none; padding: 0.25rem 0.75rem; border-radius: 6px; font-weight: 600; font-size: 0.8rem; cursor: pointer; transition: all 0.25s;">Scenario B</button>
+                </div>
+                <span class="badge" style="font-size: 0.75rem; background: rgba(6, 182, 212, 0.15); color: var(--cyan); border: 1px solid rgba(6, 182, 212, 0.3); padding: 0.25rem 0.6rem; border-radius: 99px; font-weight: 600;">Source Verified: Procore & Mortenson Q1 2026</span>
+              </div>
+            </div>
+            
+            <div class="assembly-grid" style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 2rem; margin-bottom: 0.5rem;">
+              <!-- Left: Procore Material Rates & Mortenson Dropdown -->
+              <div class="assembly-column-left">
+                <h4 class="sub-title" style="font-size: 1rem; font-weight: 600; color: var(--cyan); margin-bottom: 1.25rem;">1. Configure Cost Assemblies (Procore baselines)</h4>
+                
+                <div class="assembly-input-rows" style="display: grid; gap: 1rem;">
+                  <div class="input-row" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                    <label for="rate-metal-studs" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Steel Metal Studs (20ga 3-5/8" x 10')</label>
+                    <div class="input-wrapper" style="position: relative; display: flex; align-items: center; max-width: 160px; width: 100%;">
+                      <span class="currency-symbol" style="position: absolute; left: 0.75rem; color: var(--text-muted); font-size: 0.85rem;">$</span>
+                      <input type="number" id="rate-metal-studs" class="form-select" value="8.50" step="0.10" style="padding-left: 1.5rem; padding-right: 2.75rem; text-align: right; width: 100%;">
+                      <span class="unit-tag" style="position: absolute; right: 0.75rem; color: var(--text-muted); font-size: 0.75rem; pointer-events: none;">/pc</span>
+                    </div>
+                  </div>
+                  <div class="input-row" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                    <label for="rate-drywall" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">5/8" Type X Drywall (4' x 10')</label>
+                    <div class="input-wrapper" style="position: relative; display: flex; align-items: center; max-width: 160px; width: 100%;">
+                      <span class="currency-symbol" style="position: absolute; left: 0.75rem; color: var(--text-muted); font-size: 0.85rem;">$</span>
+                      <input type="number" id="rate-drywall" class="form-select" value="16.50" step="0.10" style="padding-left: 1.5rem; padding-right: 2.75rem; text-align: right; width: 100%;">
+                      <span class="unit-tag" style="position: absolute; right: 0.75rem; color: var(--text-muted); font-size: 0.75rem; pointer-events: none;">/sh</span>
+                    </div>
+                  </div>
+                  <div class="input-row" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                    <label for="rate-flooring" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Floor Finish Material (Wood/Carpet)</label>
+                    <div class="input-wrapper" style="position: relative; display: flex; align-items: center; max-width: 160px; width: 100%;">
+                      <span class="currency-symbol" style="position: absolute; left: 0.75rem; color: var(--text-muted); font-size: 0.85rem;">$</span>
+                      <input type="number" id="rate-flooring" class="form-select" value="4.50" step="0.10" style="padding-left: 1.5rem; padding-right: 2.75rem; text-align: right; width: 100%;">
+                      <span class="unit-tag" style="position: absolute; right: 0.75rem; color: var(--text-muted); font-size: 0.75rem; pointer-events: none;">/SF</span>
+                    </div>
+                  </div>
+                  <div class="input-row" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                    <label for="rate-labor" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Takeoff Labor Rate (Crew Average)</label>
+                    <div class="input-wrapper" style="position: relative; display: flex; align-items: center; max-width: 160px; width: 100%;">
+                      <span class="currency-symbol" style="position: absolute; left: 0.75rem; color: var(--text-muted); font-size: 0.85rem;">$</span>
+                      <input type="number" id="rate-labor" class="form-select" value="65.00" step="0.50" style="padding-left: 1.5rem; padding-right: 2.75rem; text-align: right; width: 100%;">
+                      <span class="unit-tag" style="position: absolute; right: 0.75rem; color: var(--text-muted); font-size: 0.75rem; pointer-events: none;">/hr</span>
+                    </div>
+                  </div>
+                </div>
+
+                <h4 class="sub-title" style="font-size: 1rem; font-weight: 600; color: var(--cyan); margin: 1.75rem 0 1.25rem;">2. Configure Takeoff Structural Specs</h4>
+                <div class="assembly-input-rows" style="display: grid; gap: 1rem; margin-bottom: 1rem;">
+                  <div class="input-row" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                    <label for="input-floor-count" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Floor Count Multiplier (Identical Floors)</label>
+                    <div class="input-wrapper" style="position: relative; display: flex; align-items: center; max-width: 160px; width: 100%;">
+                      <input type="number" id="input-floor-count" class="form-select" value="1" min="1" step="1" style="text-align: right; width: 100%; padding-right: 2.75rem;">
+                      <span class="unit-tag" style="position: absolute; right: 0.75rem; color: var(--text-muted); font-size: 0.75rem; pointer-events: none;">flrs</span>
+                    </div>
+                  </div>
+                  <div class="input-row" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                    <label for="input-ceiling-height" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Average Ceiling Partition Height</label>
+                    <div class="input-wrapper" style="position: relative; display: flex; align-items: center; max-width: 160px; width: 100%;">
+                      <input type="number" id="input-ceiling-height" class="form-select" value="10.0" min="4" max="30" step="0.5" style="text-align: right; width: 100%; padding-right: 2.75rem;">
+                      <span class="unit-tag" style="position: absolute; right: 0.75rem; color: var(--text-muted); font-size: 0.75rem; pointer-events: none;">ft</span>
+                    </div>
+                  </div>
+                  <div class="input-row" style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+                    <label for="select-stud-spacing" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500;">Stud O.C. (On-Center) Spacing</label>
+                    <select id="select-stud-spacing" class="form-select" style="max-width: 160px; width: 100%; text-align-last: right; padding-right: 2rem;">
+                      <option value="12">12 inches</option>
+                      <option value="16" selected>16 inches</option>
+                      <option value="24">24 inches</option>
+                    </select>
+                  </div>
+                </div>
+
+                <h4 class="sub-title" style="font-size: 1rem; font-weight: 600; color: var(--cyan); margin: 1.75rem 0 1.25rem;">3. Benchmark Cost Provider & Regional Index</h4>
+                <div class="control-group" style="margin-bottom: 1rem;">
+                  <label for="select-cost-provider" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.5rem; display: block;">Data Source Benchmark</label>
+                  <select id="select-cost-provider" class="form-select" style="width: 100%;">
+                    <option value="rsmeans" selected>RSMeans Data Online by Gordian (92,000+ Line Items)</option>
+                    <option value="mortenson">Mortenson Commercial Escalation Index</option>
+                  </select>
+                </div>
+                <div class="control-group">
+                  <label for="select-mortenson-region" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.5rem; display: block;">Regional Location Factor / City Cost Index (CCI)</label>
+                  <select id="select-mortenson-region" class="form-select" style="width: 100%;">
+                    <optgroup label="RSMeans City Cost Index (CCI)">
+                      <option value="rsmeans-national" data-factor="1.0000" selected>RSMeans National Baseline (100.0%)</option>
+                      <option value="rsmeans-nyc" data-factor="1.3240">RSMeans New York, NY (132.4%)</option>
+                      <option value="rsmeans-chicago" data-factor="1.1820">RSMeans Chicago, IL (118.2%)</option>
+                      <option value="rsmeans-la" data-factor="1.1450">RSMeans Los Angeles, CA (114.5%)</option>
+                      <option value="rsmeans-seattle" data-factor="1.1180">RSMeans Seattle, WA (111.8%)</option>
+                      <option value="rsmeans-denver" data-factor="1.0850">RSMeans Denver, CO (108.5%)</option>
+                      <option value="rsmeans-dallas" data-factor="0.9680">RSMeans Dallas, TX (96.8%)</option>
+                      <option value="rsmeans-atlanta" data-factor="0.9210">RSMeans Atlanta, GA (92.1%)</option>
+                    </optgroup>
+                    <optgroup label="Mortenson Construction Escalator (Q1 2026)">
+                      <option value="national" data-factor="1.0677">National Average (+6.77%)</option>
+                      <option value="chicago" data-factor="1.0567">Chicago, IL (+5.67%)</option>
+                      <option value="denver" data-factor="1.1037">Denver, CO (+10.37%)</option>
+                      <option value="milwaukee" data-factor="1.1032">Milwaukee, WI (+10.32%)</option>
+                      <option value="minneapolis" data-factor="1.0624">Minneapolis, MN (+6.24%)</option>
+                      <option value="phoenix" data-factor="1.0705">Phoenix, AZ (+7.05%)</option>
+                      <option value="portland" data-factor="1.0255">Portland, OR (+2.55%)</option>
+                      <option value="salt-lake-city" data-factor="1.0975">Salt Lake City, UT (+9.75%)</option>
+                      <option value="seattle" data-factor="1.0415">Seattle, WA (+4.15%)</option>
+                    </optgroup>
+                  </select>
+                </div>
+
+                <h4 class="sub-title" style="font-size: 1rem; font-weight: 600; color: var(--cyan); margin: 1.75rem 0 1.25rem;">4. CSI MasterFormat Mappings</h4>
+                <div class="control-group">
+                  <label for="select-csi-catalog" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.5rem; display: block;">Active CSI Catalog Standard</label>
+                  <select id="select-csi-catalog" class="form-select" style="width: 100%;">
+                    <option value="none">Disable CSI Auto-Coding (Simple Names)</option>
+                    <option value="division" selected>CSI Division Level (e.g. Division 09)</option>
+                    <option value="detailed">CSI Detailed Level (e.g. 09 29 00)</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Right: Calculated Estimating Cost Results -->
+              <div class="assembly-column-right" style="display: flex; flex-direction: column; justify-content: space-between;">
+                <div>
+                  <h4 class="sub-title" style="font-size: 1rem; font-weight: 600; color: var(--cyan); margin-bottom: 1.25rem;">3. Estimated Takeoff Assembly Costs</h4>
+                  
+                  <div class="cost-summary-card glass-card" style="padding: 1.25rem; border-radius: 12px; background: rgba(13, 21, 39, 0.6); display: grid; gap: 0.75rem;">
+                    <div class="cost-row" style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted);">
+                      <span>Drywall Wall Partition Assembly:</span>
+                      <strong id="calc-cost-drywall" style="color: #ffffff;">$0.00</strong>
+                    </div>
+                    <div class="cost-row" style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted);">
+                      <span>Flooring Floor Finish Assembly:</span>
+                      <strong id="calc-cost-flooring" style="color: #ffffff;">$0.00</strong>
+                    </div>
+                    <div class="cost-row" style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--text-muted);">
+                      <span>Fixtures & Frames Installation:</span>
+                      <strong id="calc-cost-fixtures" style="color: #ffffff;">$0.00</strong>
+                    </div>
+                    <div style="height: 1.5px; background: var(--slate-border); margin: 0.25rem 0;"></div>
+                    
+                    <!-- RSMeans Material, Labor, Equipment Breakdown -->
+                    <div id="rsmeans-cost-breakdown" style="padding: 0.5rem 0.75rem; background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 6px; margin: 0.1rem 0; font-size: 0.75rem;">
+                      <div style="color: var(--cyan); font-weight: 600; margin-bottom: 0.25rem; font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase;">RSMeans Cost Component Breakdown</div>
+                      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.25rem; color: var(--text-muted); text-align: center;">
+                        <div>Mat: <strong id="rsmeans-mat-val" style="color: #ffffff;">$0</strong></div>
+                        <div>Labor: <strong id="rsmeans-labor-val" style="color: #ffffff;">$0</strong></div>
+                        <div>Equip: <strong id="rsmeans-equip-val" style="color: #ffffff;">$0</strong></div>
+                      </div>
+                    </div>
+
+                    <div class="cost-row subtotal" style="display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 600; color: #ffffff;">
+                      <span>Base Assembly Subtotal:</span>
+                      <strong id="calc-cost-subtotal">$0.00</strong>
+                    </div>
+                    <div class="cost-row adjustment" style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--amber);">
+                      <span id="label-cost-adjustment">Regional Location Factor (CCI):</span>
+                      <strong id="calc-cost-adjustment">+$0.00</strong>
+                    </div>
+                    <div style="height: 1.5px; background: var(--slate-border); margin: 0.25rem 0;"></div>
+                    <div class="cost-row grand-total" style="display: flex; justify-content: space-between; font-size: 1.25rem; font-weight: 700; color: var(--emerald);">
+                      <span>Total Regional Cost:</span>
+                      <strong id="calc-cost-total">$0.00</strong>
+                    </div>
+                  </div>
+
+                  <!-- Scenario A/B Live Cost Bar Comparison -->
+                  <div class="scenario-comparison-section" style="margin-top: 1rem; border-top: 1px dashed var(--slate-border); padding-top: 1rem;">
+                    <h5 style="font-size: 0.85rem; color: var(--text-muted); font-weight: 600; margin-top: 0; margin-bottom: 0.75rem; display: flex; justify-content: space-between; align-items: center;">
+                      <span>Scenario Comparison</span>
+                      <span id="scenario-delta-text" style="color: var(--cyan); font-family: var(--font-mono); font-size: 0.75rem;">A = B</span>
+                    </h5>
+                    <div class="comparison-bar-wrapper" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                      <div class="comparison-bar-row" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 0.7rem; color: var(--text-muted); width: 75px; font-weight: 500;">Scenario A:</span>
+                        <div style="flex-grow: 1; height: 12px; background: rgba(255,255,255,0.05); border-radius: 99px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative;">
+                          <div id="bar-scenario-a" style="width: 0%; height: 100%; background: linear-gradient(90deg, #06b6d4, #00f2fe); border-radius: 99px; transition: width 0.4s ease;"></div>
+                        </div>
+                        <span id="label-bar-scenario-a" style="font-size: 0.75rem; color: #ffffff; font-weight: 600; width: 75px; text-align: right; font-family: var(--font-mono);">$0</span>
+                      </div>
+                      <div class="comparison-bar-row" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <span style="font-size: 0.7rem; color: var(--text-muted); width: 75px; font-weight: 500;">Scenario B:</span>
+                        <div style="flex-grow: 1; height: 12px; background: rgba(255,255,255,0.05); border-radius: 99px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); position: relative;">
+                          <div id="bar-scenario-b" style="width: 0%; height: 100%; background: linear-gradient(90deg, #a855f7, #ec4899); border-radius: 99px; transition: width 0.4s ease;"></div>
+                        </div>
+                        <span id="label-bar-scenario-b" style="font-size: 0.75rem; color: #ffffff; font-weight: 600; width: 75px; text-align: right; font-family: var(--font-mono);">$0</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <p class="cost-disclaimer" style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; margin: 1rem 0 0; font-family: var(--font-mono);">
+                  * Note: Pricing data benchmarked against <a href="https://www.rsmeans.com/" target="_blank" rel="noopener noreferrer" style="color: var(--cyan); text-decoration: underline;">RSMeans Data Online by Gordian</a> (92,000+ unit line items, 970+ City Cost Index location factors). Drywall assembly includes metal studs, GWB sheets, and installation labor hours.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Product Directory -->
+      <section class="directory-section section-padding" id="directory">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">Preconstruction Platforms & Alternatives</h2>
+            <p class="section-desc">If you are looking for products similar to Togal.AI, several competing preconstruction platforms leverage artificial intelligence, computer vision, and machine learning to automate the digital quantity takeoff process. The primary software alternatives to Togal.AI are categorized below by their workflow strengths:</p>
+          </div>
+
+          <!-- Directory Filter Tabs -->
+          <div class="directory-filters">
+            <div class="filter-group">
+              <button class="filter-btn active" data-category="all" id="filter-all">All Software</button>
+              <button class="filter-btn" data-category="ai-first" id="filter-ai-first">AI-First Takeoff Engines</button>
+              <button class="filter-btn" data-category="end-to-end" id="filter-end-to-end">End-to-End Estimating</button>
+              <button class="filter-btn" data-category="legacy-assisted" id="filter-legacy">Assisted AI & Desktop standards</button>
+            </div>
+            <div class="search-box">
+              <input type="text" id="directory-search-input" placeholder="Search alternatives..." aria-label="Search software alternatives">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="search-icon"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+            </div>
+          </div>
+
+          <!-- Product Cards Grid -->
+          <div class="product-grid" id="product-cards-container">
+            <!-- Dynamically populated via JS -->
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Workflow Matcher Quiz -->
+      <section class="matcher-section section-padding" id="matcher">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">Workflow Fit Evaluator</h2>
+            <p class="section-desc">Unsure which Togal.AI alternative fits your business size, budget, and takeoff volume? Take our 2-minute diagnostic assessment to identify your optimal software stack.</p>
+          </div>
+
+          <div class="matcher-wrapper glass-card">
+            <!-- Quiz Progress -->
+            <div class="quiz-progress-bar">
+              <div class="quiz-progress-fill" id="quiz-progress-fill" style="width: 25%;"></div>
+            </div>
+
+            <!-- Quiz Steps Container -->
+            <div class="quiz-steps-container" id="quiz-steps">
+              <!-- Step 1: Estimating Bottleneck -->
+              <div class="quiz-step active" id="quiz-step-1" data-question="bottleneck">
+                <span class="step-counter">Question 1 of 4</span>
+                <h3>What is your team's primary bottleneck in preconstruction?</h3>
+                <div class="quiz-options-grid">
+                  <button class="quiz-option-card" data-value="takeoff-speed" id="q1-opt1">
+                    <span class="option-title">Takeoff Drafting Speed</span>
+                    <span class="option-desc">Manually tracing rooms, walls, and counting fixtures in PDF files takes days.</span>
+                  </button>
+                  <button class="quiz-option-card" data-value="pricing-estimates" id="q1-opt2">
+                    <span class="option-title">Pricing & Estimate Sheets</span>
+                    <span class="option-desc">Linking takeoff quantities to unit pricing and assembly databases is disorganized.</span>
+                  </button>
+                  <button class="quiz-option-card" data-value="bid-management" id="q1-opt3">
+                    <span class="option-title">Bidding & Subcontractors</span>
+                    <span class="option-desc">Structuring bid packages and sending invitations to subcontractors is slow.</span>
+                  </button>
+                  <button class="quiz-option-card" data-value="drawings-annotations" id="q1-opt4">
+                    <span class="option-title">PDF Drawing Revisions</span>
+                    <span class="option-desc">Comparing sheets, overlapping revisions, and collaborating with architects on markups.</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Step 2: Deployment Style -->
+              <div class="quiz-step" id="quiz-step-2" data-question="deployment">
+                <span class="step-counter">Question 2 of 4</span>
+                <h3>How does your estimating team prefer to work?</h3>
+                <div class="quiz-options-grid">
+                  <button class="quiz-option-card" data-value="cloud" id="q2-opt1">
+                    <span class="option-title">Cloud-Based Web Browser</span>
+                    <span class="option-desc">We want to log in from any computer, collaborate in real time, and avoid manual installs.</span>
+                  </button>
+                  <button class="quiz-option-card" data-value="desktop" id="q2-opt2">
+                    <span class="option-title">Traditional Desktop Software</span>
+                    <span class="option-desc">We need powerful, offline-capable desktop systems that can handle large monitors and files local to our disk.</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Step 3: Cost Database Needs -->
+              <div class="quiz-step" id="quiz-step-3" data-question="database">
+                <span class="step-counter">Question 3 of 4</span>
+                <h3>Do you need built-in material and labor pricing databases?</h3>
+                <div class="quiz-options-grid">
+                  <button class="quiz-option-card" data-value="integrated-database" id="q3-opt1">
+                    <span class="option-title">Yes, Integrated Regional Databases</span>
+                    <span class="option-desc">We want national or local averages (e.g. RSMeans, customized price books) embedded directly.</span>
+                  </button>
+                  <button class="quiz-option-card" data-value="takeoff-only" id="q3-opt2">
+                    <span class="option-title">No, Takeoff Quantities Only</span>
+                    <span class="option-desc">We export quantities directly to Excel or our custom estimating backend; we only need areas and counts.</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Step 4: Company Scale -->
+              <div class="quiz-step" id="quiz-step-4" data-question="scale">
+                <span class="step-counter">Question 4 of 4</span>
+                <h3>What is your company's estimation team size and budget scale?</h3>
+                <div class="quiz-options-grid">
+                  <button class="quiz-option-card" data-value="small-medium" id="q4-opt1">
+                    <span class="option-title">Small-to-Mid Contractor</span>
+                    <span class="option-desc">1 to 5 estimators. Budget-conscious, looking for all-in-one value and quick onboarding.</span>
+                  </button>
+                  <button class="quiz-option-card" data-value="enterprise" id="q4-opt2">
+                    <span class="option-title">Enterprise / Multi-Branch</span>
+                    <span class="option-desc">6+ estimators. Advanced security, multi-user permissions, deep software integrations, custom setup.</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Step 5: Quiz Results -->
+              <div class="quiz-step" id="quiz-step-results">
+                <div class="results-header">
+                  <div class="success-icon-container">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="success-icon"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </div>
+                  <h3>Your Preconstruction Workflow Recommendation</h3>
+                  <p>Based on your requirements, we recommend focusing on the following software stack:</p>
+                </div>
+
+                <div class="recommended-card glass-card" id="quiz-recommendation-card">
+                  <!-- Populate via JS -->
+                </div>
+
+                <div class="results-actions">
+                  <button class="btn btn-secondary" id="btn-quiz-restart">Retake Assessment</button>
+                  <button class="btn btn-primary btn-glow" id="btn-quiz-export-report" style="display: flex; align-items: center; gap: 0.5rem;">
+                    <svg class="icon-download" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:1.15rem; height:1.15rem;">
+                      <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+                    </svg>
+                    <span>Export Proposal PDF</span>
+                  </button>
+                  <a href="#directory" class="btn btn-secondary" id="btn-quiz-view-all">View All Alternatives</a>
+                </div>
+              </div>
+            </div>
+
+            <!-- Quiz Navigation -->
+            <div class="quiz-nav" id="quiz-nav-buttons">
+              <button class="btn btn-outline" id="btn-quiz-prev" disabled>Back</button>
+              <button class="btn btn-primary" id="btn-quiz-next" disabled>Next Question</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: ROI & Savings Calculator -->
+      <section class="roi-section section-padding" id="roi-calculator">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">Estimation ROI & Efficiency Calculator</h2>
+            <p class="section-desc">By automating manual takeoff tracing with AI (which reduces takeoff time by up to 80%), see how much time and money your estimating department can reclaim.</p>
+          </div>
+
+          <div class="roi-grid">
+            <!-- Left Panel: Input Sliders -->
+            <div class="roi-panel panel-inputs glass-card">
+              <h3 class="panel-subtitle">1. Estimate Your Current Workload</h3>
+              
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="input-team-size">Number of Estimators</label>
+                  <span class="slider-value" id="val-team-size">3</span>
+                </div>
+                <input type="range" id="input-team-size" class="form-slider" min="1" max="25" value="3" aria-label="Number of Estimators">
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="input-takeoffs">Takeoffs Per Estimator / Month</label>
+                  <span class="slider-value" id="val-takeoffs">12</span>
+                </div>
+                <input type="range" id="input-takeoffs" class="form-slider" min="1" max="40" value="12" aria-label="Takeoffs Per Estimator per Month">
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="input-manual-time">Avg. Manual Takeoff Time (Hours)</label>
+                  <span class="slider-value" id="val-manual-time">8</span>
+                </div>
+                <input type="range" id="input-manual-time" class="form-slider" min="1" max="40" value="8" aria-label="Average Manual Takeoff Time in Hours">
+              </div>
+
+              <div class="slider-group">
+                <div class="slider-header">
+                  <label for="input-hourly-rate">Estimator Hourly Rate ($)</label>
+                  <span class="slider-value" id="val-hourly-rate">$55</span>
+                </div>
+                <input type="range" id="input-hourly-rate" class="form-slider" min="20" max="150" value="55" aria-label="Estimator Hourly Rate in Dollars">
+              </div>
+            </div>
+
+            <!-- Right Panel: ROI Output Visuals -->
+            <div class="roi-panel panel-outputs glass-card">
+              <div class="roi-bg-glow"></div>
+              <h3 class="panel-subtitle">2. Potential Monthly AI Reclaimed Savings</h3>
+              
+              <div class="roi-metrics">
+                <div class="roi-metric-item primary-metric">
+                  <span class="metric-label">Monthly Financial Savings</span>
+                  <span class="metric-value text-gradient" id="roi-saved-money">$12,672</span>
+                  <span class="metric-context">Assuming an 80% takeoff time reduction</span>
+                </div>
+
+                <div class="roi-divider"></div>
+
+                <div class="roi-metric-subgrid">
+                  <div class="roi-metric-item">
+                    <span class="metric-label">Hours Saved / Month</span>
+                    <span class="metric-value" id="roi-saved-hours">230 <span class="metric-unit">hrs</span></span>
+                  </div>
+                  <div class="roi-metric-item">
+                    <span class="metric-label">Annual Reclaimed Value</span>
+                    <span class="metric-value highlight-cyan" id="roi-saved-annual">$152,064</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="roi-explanation">
+                <div class="info-alert">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="alert-icon"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                  <p>AI computer vision automatically performs initial footprints and area counts. A typical estimator can execute takeoffs <strong>5x faster</strong>, shifting their focus to bid negotiation and design review.</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Section: Detailed Comparison Matrix -->
+      <section class="matrix-section section-padding" id="matrix">
+        <div class="container">
+          <div class="section-header">
+            <h2 class="section-title">Feature Comparison Matrix</h2>
+            <p class="section-desc">A side-by-side granular breakdown of Togal.AI and its primary competing preconstruction platforms.</p>
+          </div>
+
+          <div class="matrix-wrapper glass-card">
+            <div class="table-responsive">
+              <table class="comparison-table">
+                <thead>
+                  <tr>
+                    <th>Platform</th>
+                    <th>AI Automation</th>
+                    <th>Pricing model</th>
+                    <th>Key Workflow Strength</th>
+                    <th>Platform Type</th>
+                    <th>Cost Databases</th>
+                    <th>Team Sharing</th>
+                  </tr>
+                </thead>
+                <tbody id="comparison-table-body">
+                  <!-- Dynamically populated via JS -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <!-- Component 3: Software Capabilities Radar Chart -->
+          <div class="radar-chart-container glass-card" style="margin-top: 2.5rem; padding: 2rem;">
+            <div class="radar-layout" style="display: grid; grid-template-columns: 1fr 1.1fr; gap: 2rem; align-items: center;">
+              <div class="radar-info">
+                <h3 style="font-size: 1.35rem; font-weight: 700; color: #ffffff; margin-bottom: 0.5rem; display: flex; align-items: center; gap: 0.5rem;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" style="width: 1.5rem; height: 1.5rem;"><circle cx="12" cy="12" r="10"/><path d="M16.2 7.8l-2 5.6-5.6 2 2-5.6 5.6-2z"/></svg>
+                  Capabilities Radar Compass
+                </h3>
+                <p class="radar-desc" style="font-size: 0.85rem; color: var(--text-muted); line-height: 1.5; margin-bottom: 1.5rem;">
+                  See how different preconstruction platforms score across five core operational dimensions. Hover over any product card in the directory or select a tool button below to update the radar map.
+                </p>
+                <div class="radar-selector-buttons" id="radar-platform-selectors" style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1.5rem;">
+                  <!-- Dynamic buttons populated via JS -->
+                </div>
+                <div class="radar-metrics-readout" id="radar-metrics-details" style="padding: 1rem; border-radius: 8px; background: rgba(13, 21, 39, 0.4); border: 1px solid var(--slate-border);">
+                  <div style="font-family: var(--font-mono); font-size: 0.75rem; color: var(--cyan); margin-bottom: 0.5rem; text-transform: uppercase; letter-spacing: 0.05em;">Interactive Metrics Readout</div>
+                  <div id="radar-metrics-list" style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; font-size: 0.8rem; color: var(--text-muted);">
+                    <!-- Dynamic scores -->
+                    <div>Takeoff Speed: <strong id="val-r-speed" style="color:#fff;">0/50</strong></div>
+                    <div>Cost Database: <strong id="val-r-database" style="color:#fff;">0/50</strong></div>
+                    <div>Custom Assemblies: <strong id="val-r-assemblies" style="color:#fff;">0/50</strong></div>
+                    <div>Bid Management: <strong id="val-r-bid" style="color:#fff;">0/50</strong></div>
+                    <div>Client Reporting: <strong id="val-r-report" style="color:#fff;">0/50</strong></div>
+                  </div>
+                </div>
+              </div>
+              <div class="radar-visual" style="display: flex; justify-content: center; align-items: center; height: 320px; position: relative;">
+                <!-- SVG Radar Canvas -->
+                <svg id="capabilities-radar-svg" viewBox="0 0 400 400" width="100%" height="100%" style="max-width: 320px; max-height: 320px; overflow: visible;">
+                  <!-- Dynamic SVG content drawn in JS -->
+                </svg>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- App Footer -->
+    <footer class="app-footer">
+      <div class="container footer-container">
+        <div class="footer-brand">
+          <div class="logo-link">
+            <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5" />
+            </svg>
+            <span class="logo-text">Takeoff<span class="logo-highlight">Compass</span></span>
+          </div>
+          <p class="footer-tagline">AI-assisted quantity takeoff and preconstruction evaluation.</p>
+        </div>
+        <div class="footer-links-group">
+          <h5>Product Categories</h5>
+          <ul>
+            <li><a href="#directory" data-filter="ai-first">AI-First Engines</a></li>
+            <li><a href="#directory" data-filter="end-to-end">End-to-End Suites</a></li>
+            <li><a href="#directory" data-filter="legacy-assisted">Assisted Legacy Systems</a></li>
+          </ul>
+        </div>
+        <div class="footer-bottom">
+          <p>&copy; 2026 TakeoffCompass. All rights reserved. Preconstruction software reviews and interactive performance simulations.</p>
+        </div>
+      </div>
+    </footer>
+
+  </body>
+</html>
