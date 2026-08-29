@@ -356,53 +356,58 @@ const BLUEPRINTS = {
   },
   duplex: {
     title: 'Duplex Residential Home (Plan D-577)',
-    imageUrl: './d-577-page-4.png',
+    imageUrl: './image.png',
     totalArea: 2349,
     linearWalls: 820,
     doors: 12,
     windows: 16,
     rooms: [
-      { id: 'livingA', name: 'Unit A - Living Room', area: 320, path: 'M 100,80 L 220,80 L 220,240 L 100,240 Z', color: 'rgba(99, 102, 241, 0.25)', border: '#6366f1', textX: 160, textY: 160, material: 'Hardwood: 35 sq yds | Baseboard: 64 LF' },
-      { id: 'bedA', name: 'Unit A - Bedroom 1', area: 210, path: 'M 220,80 L 340,80 L 340,240 L 220,240 Z', color: 'rgba(6, 182, 212, 0.25)', border: '#06b6d4', textX: 280, textY: 160, material: 'Carpet: 23 sq yds | Baseboard: 55 LF' },
-      { id: 'kitchenA', name: 'Unit A - Kitchen', area: 180, path: 'M 100,240 L 220,240 L 220,380 L 100,380 Z', color: 'rgba(16, 185, 129, 0.25)', border: '#10b981', textX: 160, textY: 310, material: 'Vinyl plank: 20 sq yds | Cabinets: 12 LF' },
-      { id: 'diningA', name: 'Unit A - Dining', area: 150, path: 'M 220,240 L 340,240 L 340,380 L 220,380 Z', color: 'rgba(245, 158, 11, 0.25)', border: '#f59e0b', textX: 280, textY: 310, material: 'Hardwood: 16 sq yds | Crown molding: 48 LF' },
-      { id: 'livingB', name: 'Unit B - Living Room', area: 320, path: 'M 580,80 L 700,80 L 700,240 L 580,240 Z', color: 'rgba(99, 102, 241, 0.25)', border: '#6366f1', textX: 640, textY: 160, material: 'Hardwood: 35 sq yds | Baseboard: 64 LF' },
-      { id: 'bedB', name: 'Unit B - Bedroom 1', area: 210, path: 'M 460,80 L 580,80 L 580,240 L 460,240 Z', color: 'rgba(6, 182, 212, 0.25)', border: '#06b6d4', textX: 520, textY: 160, material: 'Carpet: 23 sq yds | Baseboard: 55 LF' },
-      { id: 'kitchenB', name: 'Unit B - Kitchen', area: 180, path: 'M 580,240 L 700,240 L 700,380 L 580,380 Z', color: 'rgba(16, 185, 129, 0.25)', border: '#10b981', textX: 640, textY: 310, material: 'Vinyl plank: 20 sq yds | Cabinets: 12 LF' },
-      { id: 'diningB', name: 'Unit B - Dining', area: 150, path: 'M 460,240 L 580,240 L 580,380 L 460,380 Z', color: 'rgba(245, 158, 11, 0.25)', border: '#f59e0b', textX: 520, textY: 310, material: 'Hardwood: 16 sq yds | Crown molding: 48 LF' }
+      { id: 'familyA', name: 'Unit A - Family / Game Area', area: 420, path: 'M 145,75 L 265,75 L 265,275 L 180,275 L 180,310 L 145,310 Z', color: 'rgba(99, 102, 241, 0.25)', border: '#6366f1', textX: 205, textY: 175, material: 'Engineered Oak: 46 sq yds | Drywall: 65 sheets' },
+      { id: 'bed2A', name: 'Unit A - Bed 2', area: 210, path: 'M 265,75 L 350,75 L 350,210 L 265,210 Z', color: 'rgba(6, 182, 212, 0.25)', border: '#06b6d4', textX: 307, textY: 142, material: 'Carpet: 23 sq yds | Baseboard: 55 LF' },
+      { id: 'bed3A', name: 'Unit A - Bed 3', area: 210, path: 'M 350,75 L 435,75 L 435,210 L 350,210 Z', color: 'rgba(16, 185, 129, 0.25)', border: '#10b981', textX: 392, textY: 142, material: 'Carpet: 23 sq yds | Baseboard: 55 LF' },
+      { id: 'bathA', name: 'Unit A - Bath Suite', area: 120, path: 'M 350,210 L 435,210 L 435,275 L 350,275 Z', color: 'rgba(244, 63, 94, 0.25)', border: '#f43f5e', textX: 392, textY: 242, material: 'Tile: 13 sq yds | Wetwall: 6 sheets' },
+      { id: 'crawlA', name: 'Unit A - Crawl Space', area: 380, path: 'M 305,275 L 440,275 L 440,430 L 305,430 Z', color: 'rgba(245, 158, 11, 0.25)', border: '#f59e0b', textX: 372, textY: 352, material: 'Concrete Slab: 42 sq yds | Insulation: 12 rolls' },
+      { id: 'bed3B', name: 'Unit B - Bed 3', area: 210, path: 'M 450,110 L 535,110 L 535,245 L 450,245 Z', color: 'rgba(16, 185, 129, 0.25)', border: '#10b981', textX: 492, textY: 177, material: 'Carpet: 23 sq yds | Baseboard: 55 LF' },
+      { id: 'bed2B', name: 'Unit B - Bed 2', area: 210, path: 'M 535,110 L 620,110 L 620,245 L 535,245 Z', color: 'rgba(6, 182, 212, 0.25)', border: '#06b6d4', textX: 577, textY: 177, material: 'Carpet: 23 sq yds | Baseboard: 55 LF' },
+      { id: 'familyB', name: 'Unit B - Family / Game Area', area: 420, path: 'M 620,110 L 740,110 L 740,345 L 705,345 L 705,310 L 620,310 Z', color: 'rgba(99, 102, 241, 0.25)', border: '#6366f1', textX: 680, textY: 227, material: 'Engineered Oak: 46 sq yds | Drywall: 65 sheets' },
+      { id: 'bathB', name: 'Unit B - Bath Suite', area: 120, path: 'M 450,245 L 535,245 L 535,310 L 450,310 Z', color: 'rgba(244, 63, 94, 0.25)', border: '#f43f5e', textX: 492, textY: 277, material: 'Tile: 13 sq yds | Wetwall: 6 sheets' },
+      { id: 'crawlB', name: 'Unit B - Crawl Space', area: 380, path: 'M 450,310 L 585,310 L 585,465 L 450,465 Z', color: 'rgba(245, 158, 11, 0.25)', border: '#f59e0b', textX: 517, textY: 387, material: 'Concrete Slab: 42 sq yds | Insulation: 12 rolls' }
     ],
     walls: [
-      'M 90,70 L 350,70 L 350,380 L 90,380 Z',
-      'M 450,70 L 710,70 L 710,380 L 450,380 Z',
-      'M 220,70 L 220,380',
-      'M 90,240 L 350,240',
-      'M 580,70 L 580,380',
-      'M 450,240 L 710,240'
+      'M 145,75 L 435,75 L 435,275 L 440,275 L 440,430 L 305,430 L 305,275 L 180,275 L 180,310 L 145,310 Z',
+      'M 450,110 L 740,110 L 740,345 L 705,345 L 705,310 L 620,310 L 585,310 L 585,465 L 450,465 Z',
+      'M 265,75 L 265,275',
+      'M 350,75 L 350,275',
+      'M 535,110 L 535,310',
+      'M 620,110 L 620,310'
     ],
     fixtures: [
-      { type: 'door', label: 'Unit A Entry', x: 90, y: 160, r: 15 },
-      { type: 'door', label: 'Unit A Bed 1', x: 220, y: 120, r: 15 },
-      { type: 'door', label: 'Unit A Kitchen', x: 160, y: 240, r: 15 },
-      { type: 'door', label: 'Unit A Deck', x: 280, y: 380, r: 15 },
-      { type: 'door', label: 'Unit B Entry', x: 710, y: 160, r: 15 },
-      { type: 'door', label: 'Unit B Bed 1', x: 580, y: 120, r: 15 },
-      { type: 'door', label: 'Unit B Kitchen', x: 640, y: 240, r: 15 },
-      { type: 'door', label: 'Unit B Deck', x: 520, y: 380, r: 15 },
-      { type: 'window', label: 'Unit A Window 1', x: 150, y: 70, w: 40, h: 4 },
-      { type: 'window', label: 'Unit A Window 2', x: 280, y: 70, w: 40, h: 4 },
-      { type: 'window', label: 'Unit A Window 3', x: 90, y: 300, w: 4, h: 40 },
-      { type: 'window', label: 'Unit B Window 1', x: 610, y: 70, w: 40, h: 4 },
-      { type: 'window', label: 'Unit B Window 2', x: 480, y: 70, w: 40, h: 4 },
-      { type: 'window', label: 'Unit B Window 3', x: 710, y: 300, w: 4, h: 40 }
+      { type: 'door', label: 'Unit A Entry', x: 145, y: 195, r: 15 },
+      { type: 'door', label: 'Unit A Bed 2', x: 307, y: 210, r: 15 },
+      { type: 'door', label: 'Unit A Bed 3', x: 392, y: 210, r: 15 },
+      { type: 'door', label: 'Unit A Bath', x: 392, y: 275, r: 15 },
+      { type: 'door', label: 'Unit B Entry', x: 740, y: 227, r: 15 },
+      { type: 'door', label: 'Unit B Bed 3', x: 492, y: 245, r: 15 },
+      { type: 'door', label: 'Unit B Bed 2', x: 577, y: 245, r: 15 },
+      { type: 'door', label: 'Unit B Bath', x: 492, y: 310, r: 15 },
+      { type: 'window', label: 'Unit A Win 1', x: 145, y: 110, w: 4, h: 40 },
+      { type: 'window', label: 'Unit A Win 2', x: 200, y: 75, w: 40, h: 4 },
+      { type: 'window', label: 'Unit A Win 3', x: 300, y: 75, w: 40, h: 4 },
+      { type: 'window', label: 'Unit A Win 4', x: 380, y: 75, w: 40, h: 4 },
+      { type: 'window', label: 'Unit B Win 1', x: 490, y: 110, w: 40, h: 4 },
+      { type: 'window', label: 'Unit B Win 2', x: 570, y: 110, w: 40, h: 4 },
+      { type: 'window', label: 'Unit B Win 3', x: 670, y: 110, w: 40, h: 4 },
+      { type: 'window', label: 'Unit B Win 4', x: 740, y: 180, w: 4, h: 40 }
     ],
     materials: [
-      { name: 'Hardwood Flooring Finish', qty: '100 Sq Yds' },
-      { name: 'Plush Bedroom Carpeting', qty: '46 Sq Yds' },
-      { name: 'Vinyl Plank Flooring Finish', qty: '40 Sq Yds' },
-      { name: 'Composition Asphalt Shingles', qty: '28 Sqs' },
-      { name: 'Fiber Cement Lap Siding', qty: '34 Sqs' },
-      { name: 'Type X 5/8" Drywall (4x12)', qty: '480 Sheets' },
-      { name: '2x6 Timber Studs (8\' framing)', qty: '620 Pcs' },
+      { name: 'Engineered Oak Flooring Finish', qty: '110 Sq Yds' },
+      { name: 'Plush Bedroom Carpeting', qty: '92 Sq Yds' },
+      { name: 'Bath Suite Ceramic Tile', qty: '26 Sq Yds' },
+      { name: 'Crawl Space Concrete Foundation', qty: '84 Sq Yds' },
+      { name: 'Composition Asphalt Shingles', qty: '32 Sqs' },
+      { name: 'Fiber Cement Lap Siding', qty: '38 Sqs' },
+      { name: 'Type X 5/8" Drywall (4x12)', qty: '520 Sheets' },
+      { name: '2x6 Timber Studs (8\' framing)', qty: '680 Pcs' },
       { name: 'Double Pane Insulated Windows', qty: '16 Sets' },
       { name: 'Solid Core Timber Passage Doors', qty: '12 Sets' }
     ]
@@ -1430,7 +1435,7 @@ function initSimulator() {
       imgEl.setAttribute('y', '10');
       imgEl.setAttribute('width', '780');
       imgEl.setAttribute('height', '460');
-      imgEl.setAttribute('opacity', '0.35'); // Cleaner layout visibility
+      imgEl.setAttribute('opacity', '0.55'); // Crisp residential floorplan rendering
       drawingsGroup.appendChild(imgEl);
     }
 
