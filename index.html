@@ -524,19 +524,38 @@
                   </div>
                 </div>
 
-                <h4 class="sub-title" style="font-size: 1rem; font-weight: 600; color: var(--cyan); margin: 1.75rem 0 1.25rem;">3. Select Mortenson Construction Cost Region</h4>
+                <h4 class="sub-title" style="font-size: 1rem; font-weight: 600; color: var(--cyan); margin: 1.75rem 0 1.25rem;">3. Benchmark Cost Provider & Regional Index</h4>
+                <div class="control-group" style="margin-bottom: 1rem;">
+                  <label for="select-cost-provider" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.5rem; display: block;">Data Source Benchmark</label>
+                  <select id="select-cost-provider" class="form-select" style="width: 100%;">
+                    <option value="rsmeans" selected>RSMeans Data Online by Gordian (92,000+ Line Items)</option>
+                    <option value="mortenson">Mortenson Commercial Escalation Index</option>
+                  </select>
+                </div>
                 <div class="control-group">
-                  <label for="select-mortenson-region" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.5rem; display: block;">Escalation Market Multiplier (Q1 2026 Index Factors)</label>
+                  <label for="select-mortenson-region" style="font-size: 0.85rem; color: var(--text-muted); font-weight: 500; margin-bottom: 0.5rem; display: block;">Regional Location Factor / City Cost Index (CCI)</label>
                   <select id="select-mortenson-region" class="form-select" style="width: 100%;">
-                    <option value="national" data-factor="1.0677">National Average (+6.77% index adjustment)</option>
-                    <option value="chicago" data-factor="1.0567">Chicago, IL (+5.67% index adjustment)</option>
-                    <option value="denver" data-factor="1.1037">Denver, CO (+10.37% index adjustment)</option>
-                    <option value="milwaukee" data-factor="1.1032">Milwaukee, WI (+10.32% index adjustment)</option>
-                    <option value="minneapolis" data-factor="1.0624">Minneapolis, MN (+6.24% index adjustment)</option>
-                    <option value="phoenix" data-factor="1.0705">Phoenix, AZ (+7.05% index adjustment)</option>
-                    <option value="portland" data-factor="1.0255">Portland, OR (+2.55% index adjustment)</option>
-                    <option value="salt-lake-city" data-factor="1.0975">Salt Lake City, UT (+9.75% index adjustment)</option>
-                    <option value="seattle" data-factor="1.0415">Seattle, WA (+4.15% index adjustment)</option>
+                    <optgroup label="RSMeans City Cost Index (CCI)">
+                      <option value="rsmeans-national" data-factor="1.0000" selected>RSMeans National Baseline (100.0%)</option>
+                      <option value="rsmeans-nyc" data-factor="1.3240">RSMeans New York, NY (132.4%)</option>
+                      <option value="rsmeans-chicago" data-factor="1.1820">RSMeans Chicago, IL (118.2%)</option>
+                      <option value="rsmeans-la" data-factor="1.1450">RSMeans Los Angeles, CA (114.5%)</option>
+                      <option value="rsmeans-seattle" data-factor="1.1180">RSMeans Seattle, WA (111.8%)</option>
+                      <option value="rsmeans-denver" data-factor="1.0850">RSMeans Denver, CO (108.5%)</option>
+                      <option value="rsmeans-dallas" data-factor="0.9680">RSMeans Dallas, TX (96.8%)</option>
+                      <option value="rsmeans-atlanta" data-factor="0.9210">RSMeans Atlanta, GA (92.1%)</option>
+                    </optgroup>
+                    <optgroup label="Mortenson Construction Escalator (Q1 2026)">
+                      <option value="national" data-factor="1.0677">National Average (+6.77%)</option>
+                      <option value="chicago" data-factor="1.0567">Chicago, IL (+5.67%)</option>
+                      <option value="denver" data-factor="1.1037">Denver, CO (+10.37%)</option>
+                      <option value="milwaukee" data-factor="1.1032">Milwaukee, WI (+10.32%)</option>
+                      <option value="minneapolis" data-factor="1.0624">Minneapolis, MN (+6.24%)</option>
+                      <option value="phoenix" data-factor="1.0705">Phoenix, AZ (+7.05%)</option>
+                      <option value="portland" data-factor="1.0255">Portland, OR (+2.55%)</option>
+                      <option value="salt-lake-city" data-factor="1.0975">Salt Lake City, UT (+9.75%)</option>
+                      <option value="seattle" data-factor="1.0415">Seattle, WA (+4.15%)</option>
+                    </optgroup>
                   </select>
                 </div>
 
@@ -570,12 +589,23 @@
                       <strong id="calc-cost-fixtures" style="color: #ffffff;">$0.00</strong>
                     </div>
                     <div style="height: 1.5px; background: var(--slate-border); margin: 0.25rem 0;"></div>
+                    
+                    <!-- RSMeans Material, Labor, Equipment Breakdown -->
+                    <div id="rsmeans-cost-breakdown" style="padding: 0.5rem 0.75rem; background: rgba(6, 182, 212, 0.08); border: 1px solid rgba(6, 182, 212, 0.2); border-radius: 6px; margin: 0.1rem 0; font-size: 0.75rem;">
+                      <div style="color: var(--cyan); font-weight: 600; margin-bottom: 0.25rem; font-family: var(--font-mono); font-size: 0.7rem; text-transform: uppercase;">RSMeans Cost Component Breakdown</div>
+                      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 0.25rem; color: var(--text-muted); text-align: center;">
+                        <div>Mat: <strong id="rsmeans-mat-val" style="color: #ffffff;">$0</strong></div>
+                        <div>Labor: <strong id="rsmeans-labor-val" style="color: #ffffff;">$0</strong></div>
+                        <div>Equip: <strong id="rsmeans-equip-val" style="color: #ffffff;">$0</strong></div>
+                      </div>
+                    </div>
+
                     <div class="cost-row subtotal" style="display: flex; justify-content: space-between; font-size: 0.95rem; font-weight: 600; color: #ffffff;">
                       <span>Base Assembly Subtotal:</span>
                       <strong id="calc-cost-subtotal">$0.00</strong>
                     </div>
                     <div class="cost-row adjustment" style="display: flex; justify-content: space-between; font-size: 0.85rem; color: var(--amber);">
-                      <span>Mortenson Regional Escalator:</span>
+                      <span id="label-cost-adjustment">Regional Location Factor (CCI):</span>
                       <strong id="calc-cost-adjustment">+$0.00</strong>
                     </div>
                     <div style="height: 1.5px; background: var(--slate-border); margin: 0.25rem 0;"></div>
@@ -610,7 +640,7 @@
                   </div>
                 </div>
                 <p class="cost-disclaimer" style="font-size: 0.7rem; color: var(--text-muted); line-height: 1.4; margin: 1rem 0 0; font-family: var(--font-mono);">
-                  * Note: Drywall assembly calculates studs (16" O.C. spacing), drywall sheets, joints, and installation labor hours (assuming 8' wall height). Fixtures calculate door and window installation times. Region index factors source: Q1 2026.
+                  * Note: Pricing data benchmarked against <a href="https://www.rsmeans.com/" target="_blank" rel="noopener noreferrer" style="color: var(--cyan); text-decoration: underline;">RSMeans Data Online by Gordian</a> (92,000+ unit line items, 970+ City Cost Index location factors). Drywall assembly includes metal studs, GWB sheets, and installation labor hours.
                 </p>
               </div>
             </div>

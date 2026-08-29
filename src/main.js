@@ -4,6 +4,33 @@ import './style.css';
 // 1. Data Store
 const PRODUCTS = [
   {
+    id: 'rsmeans',
+    name: 'RSMeans Data Online',
+    category: 'end-to-end',
+    categoryLabel: 'Industry Benchmark & AI Estimating',
+    tagline: 'North America\'s premier construction cost database with Flash AI Estimating',
+    description: 'RSMeans Data by Gordian provides over 92,000 unit line items, 970+ localized market indices, and 30,000+ annual research hours. Flash AI Estimating powered by RSMeans Data maps drawing quantities directly to MasterFormat line items and localized material, labor, and equipment pricing.',
+    url: 'https://www.rsmeans.com/',
+    logoText: 'RS',
+    specs: {
+      speed: 'High (~75% reduction with Flash AI)',
+      deployment: 'Cloud (Gordian Platform)',
+      pricingModel: 'Tiered Subscription (Core / Complete / Plus)',
+      target: 'Estimators, GCs, Subcontractors & Owners'
+    },
+    pros: [
+      'North America\'s most trusted 92,000+ line item cost database',
+      '970+ location factors (City Cost Index) for precision regional pricing',
+      'Flash AI Estimating maps automated takeoff counts to MasterFormat assemblies'
+    ],
+    cons: [
+      'Full database tier subscriptions require enterprise licensing',
+      'Requires standard alignment with CSI MasterFormat / Uniformat taxonomy'
+    ],
+    pricing: 'Core / Complete / Plus Tiers',
+    radarScores: { speed: 44, database: 50, assemblies: 48, bid: 40, report: 48 }
+  },
+  {
     id: 'togal',
     name: 'Togal.AI',
     category: 'ai-first',
@@ -1122,26 +1149,6 @@ function initSimulator() {
     return { x: svgP.x, y: svgP.y };
   }
 
-  function getPolygonArea(pts) {
-    let area = 0;
-    const n = pts.length;
-    for (let i = 0; i < n; i++) {
-      const j = (i + 1) % n;
-      area += pts[i].x * pts[j].y;
-      area -= pts[j].x * pts[i].y;
-    }
-    return Math.abs(area) / 2;
-  }
-
-  function getPolygonPerimeter(pts) {
-    let perimeter = 0;
-    const n = pts.length;
-    for (let i = 0; i < n; i++) {
-      const j = (i + 1) % n;
-      perimeter += Math.sqrt((pts[i].x - pts[j].x) ** 2 + (pts[i].y - pts[j].y) ** 2);
-    }
-    return perimeter;
-  }
 
   function closePolygonMarkup() {
     if (currentPolygonPoints.length < 3) return;
@@ -1838,10 +1845,10 @@ function initQuiz() {
     } else if (deployment === 'desktop') {
       recoProduct = PRODUCTS.find(p => p.id === 'ost') || PRODUCTS[5];
     } else if (bottleneck === 'pricing-estimates' || database === 'integrated-database') {
-      if (scale === 'small-medium') {
-        recoProduct = PRODUCTS.find(p => p.id === 'quotr') || PRODUCTS[3];
+      if (scale === 'enterprise' || database === 'integrated-database') {
+        recoProduct = PRODUCTS.find(p => p.id === 'rsmeans') || PRODUCTS.find(p => p.id === 'stack') || PRODUCTS[0];
       } else {
-        recoProduct = PRODUCTS.find(p => p.id === 'stack') || PRODUCTS[4];
+        recoProduct = PRODUCTS.find(p => p.id === 'quotr') || PRODUCTS[3];
       }
     } else {
       // AI first speed focus
@@ -2011,6 +2018,7 @@ function initAssemblyConsole() {
   const drywallInput = document.getElementById('rate-drywall');
   const flooringInput = document.getElementById('rate-flooring');
   const laborInput = document.getElementById('rate-labor');
+  const providerSelect = document.getElementById('select-cost-provider');
   const regionSelect = document.getElementById('select-mortenson-region');
   const csiSelect = document.getElementById('select-csi-catalog');
   
@@ -2021,7 +2029,7 @@ function initAssemblyConsole() {
   if (!metalStudsInput) return;
   
   [
-    metalStudsInput, drywallInput, flooringInput, laborInput, regionSelect, csiSelect,
+    metalStudsInput, drywallInput, flooringInput, laborInput, providerSelect, regionSelect, csiSelect,
     floorCountInput, ceilingHeightInput, studSpacingSelect
   ].forEach(input => {
     if (input) {
@@ -2304,11 +2312,19 @@ function updateCostEstimates() {
   const rateFlooring = parseFloat(document.getElementById('rate-flooring').value) || 0;
   const rateLabor = parseFloat(document.getElementById('rate-labor').value) || 0;
   
+  const providerSelect = document.getElementById('select-cost-provider');
+  const isRSMeans = providerSelect ? providerSelect.value === 'rsmeans' : true;
+
   const regionSelect = document.getElementById('select-mortenson-region');
   if (!regionSelect) return;
   
   const selectedOption = regionSelect.options[regionSelect.selectedIndex];
   const factor = parseFloat(selectedOption.getAttribute('data-factor')) || 1.0;
+
+  const labelAdjustment = document.getElementById('label-cost-adjustment');
+  if (labelAdjustment) {
+    labelAdjustment.textContent = isRSMeans ? 'RSMeans Location Factor (CCI):' : 'Mortenson Escalator Multiplier:';
+  }
 
   // Fetch structural spec console variables
   const floors = parseInt(document.getElementById('input-floor-count').value) || 1;
@@ -2488,23 +2504,44 @@ function updateCostEstimates() {
   const studsCount = Math.ceil((walls * 12) / spacing);
   const drywallSheets = Math.ceil((walls * 2 * ceiling) / 40); // 40 SF per sheet (4' x 10')
   const drywallLaborHours = (walls * 0.12) + (drywallSheets * 0.22);
-  const drywallCost = (studsCount * rateMetalStuds) + (drywallSheets * rateDrywall) + (drywallLaborHours * rateLabor);
+  const drywallMaterialCost = (studsCount * rateMetalStuds) + (drywallSheets * rateDrywall);
+  const drywallLaborCost = drywallLaborHours * rateLabor;
+  const drywallCost = drywallMaterialCost + drywallLaborCost;
 
   // Flooring Assembly calculation:
   const flooringMaterialCost = area * rateFlooring;
   const flooringLaborHours = area * 0.045;
-  const flooringCost = flooringMaterialCost + (flooringLaborHours * rateLabor);
+  const flooringLaborCost = flooringLaborHours * rateLabor;
+  const flooringCost = flooringMaterialCost + flooringLaborCost;
 
   // Fixtures installation calculation:
   const doorCostUnit = 280;
   const windowCostUnit = 380;
   const fixturesMaterial = (doors * doorCostUnit) + (windows * windowCostUnit);
   const fixturesLaborHours = (doors * 2.2) + (windows * 1.6);
-  const fixturesCost = fixturesMaterial + (fixturesLaborHours * rateLabor);
+  const fixturesLaborCost = fixturesLaborHours * rateLabor;
+  const fixturesCost = fixturesMaterial + fixturesLaborCost;
 
-  const subtotal = drywallCost + flooringCost + fixturesCost;
+  const matSubtotal = drywallMaterialCost + flooringMaterialCost + fixturesMaterial;
+  const laborSubtotal = drywallLaborCost + flooringLaborCost + fixturesLaborCost;
+  const equipSubtotal = isRSMeans ? Math.round((matSubtotal + laborSubtotal) * 0.05) : 0;
+
+  const subtotal = matSubtotal + laborSubtotal + equipSubtotal;
   const grandTotal = subtotal * factor;
   const regionalAdjustment = grandTotal - subtotal;
+
+  // Update RSMeans Component Pill Breakdown
+  const rsMeansMatVal = document.getElementById('rsmeans-mat-val');
+  const rsMeansLaborVal = document.getElementById('rsmeans-labor-val');
+  const rsMeansEquipVal = document.getElementById('rsmeans-equip-val');
+  const rsMeansBreakdownPill = document.getElementById('rsmeans-cost-breakdown');
+
+  if (rsMeansBreakdownPill) {
+    rsMeansBreakdownPill.style.display = isRSMeans ? 'block' : 'none';
+  }
+  if (rsMeansMatVal) rsMeansMatVal.textContent = `$${Math.round(matSubtotal * factor).toLocaleString()}`;
+  if (rsMeansLaborVal) rsMeansLaborVal.textContent = `$${Math.round(laborSubtotal * factor).toLocaleString()}`;
+  if (rsMeansEquipVal) rsMeansEquipVal.textContent = `$${Math.round(equipSubtotal * factor).toLocaleString()}`;
 
   if (drywallVal) drywallVal.textContent = `$${drywallCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
   if (flooringVal) flooringVal.textContent = `$${flooringCost.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
@@ -3063,6 +3100,27 @@ function generateSvgPathFromPoints(points) {
   }
   pathStr += ' Z';
   return pathStr;
+}
+
+function getPolygonArea(pts) {
+  let area = 0;
+  const n = pts.length;
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    area += pts[i].x * pts[j].y;
+    area -= pts[j].x * pts[i].y;
+  }
+  return Math.abs(area) / 2;
+}
+
+function getPolygonPerimeter(pts) {
+  let perimeter = 0;
+  const n = pts.length;
+  for (let i = 0; i < n; i++) {
+    const j = (i + 1) % n;
+    perimeter += Math.sqrt((pts[i].x - pts[j].x) ** 2 + (pts[i].y - pts[j].y) ** 2);
+  }
+  return perimeter;
 }
 
 function getPolygonCentroid(pts) {

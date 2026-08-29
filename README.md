@@ -15,9 +15,10 @@ Several competing preconstruction platforms leverage artificial intelligence, co
 *   **Kreo Takeoff:** A cloud-based semantic takeoff engine. Its core strength is its direct binding of auto-measured CAD geometry to a collaborative, Excel-like sheet editor.
 *   **Beam AI:** A lightweight, speed-focused takeoff processor designed to parse site, concrete, and finishing plans quickly and export clean CSV/Excel quantities.
 
-### Category B: End-to-End Estimating Suites (Quantity to Bid-Ready Proposal)
+### Category B: End-to-End Estimating Suites & Cost Databases (Quantity to Bid-Ready Proposal)
 *These tools carry takeoff numbers forward, linking them directly to assemblies, cost data, and client bids.*
 
+*   **RSMeans Data Online (Gordian):** North America's premier construction cost database with over 92,000 unit line items, 970+ City Cost Index (CCI) location factors, and Flash AI Estimating that maps drawing quantities directly to CSI MasterFormat assemblies.
 *   **Quotr.ai:** Integrates AI takeoff directly with local material and labor pricing databases. Ideal for estimators who want to go from a 2D drawing straight to a priced, client-ready contract proposal in one interface.
 *   **STACK Construction Technologies:** A massive cloud preconstruction platform featuring robust multi-user databases, custom assembly builders, and emerging AI takeoff assistants.
 
