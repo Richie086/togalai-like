@@ -326,6 +326,59 @@ const BLUEPRINTS = {
       { name: 'Flush Wood Passage Doors', qty: '2 Sets' },
       { name: 'Heavy Commercial Storefront Glass', qty: '5 Units' }
     ]
+  },
+  duplex: {
+    title: 'Duplex Residential Home (Plan D-577)',
+    imageUrl: './d-577-page-4.png',
+    totalArea: 2349,
+    linearWalls: 820,
+    doors: 12,
+    windows: 16,
+    rooms: [
+      { id: 'livingA', name: 'Unit A - Living Room', area: 320, path: 'M 100,80 L 220,80 L 220,240 L 100,240 Z', color: 'rgba(99, 102, 241, 0.25)', border: '#6366f1', textX: 160, textY: 160, material: 'Hardwood: 35 sq yds | Baseboard: 64 LF' },
+      { id: 'bedA', name: 'Unit A - Bedroom 1', area: 210, path: 'M 220,80 L 340,80 L 340,240 L 220,240 Z', color: 'rgba(6, 182, 212, 0.25)', border: '#06b6d4', textX: 280, textY: 160, material: 'Carpet: 23 sq yds | Baseboard: 55 LF' },
+      { id: 'kitchenA', name: 'Unit A - Kitchen', area: 180, path: 'M 100,240 L 220,240 L 220,380 L 100,380 Z', color: 'rgba(16, 185, 129, 0.25)', border: '#10b981', textX: 160, textY: 310, material: 'Vinyl plank: 20 sq yds | Cabinets: 12 LF' },
+      { id: 'diningA', name: 'Unit A - Dining', area: 150, path: 'M 220,240 L 340,240 L 340,380 L 220,380 Z', color: 'rgba(245, 158, 11, 0.25)', border: '#f59e0b', textX: 280, textY: 310, material: 'Hardwood: 16 sq yds | Crown molding: 48 LF' },
+      { id: 'livingB', name: 'Unit B - Living Room', area: 320, path: 'M 580,80 L 700,80 L 700,240 L 580,240 Z', color: 'rgba(99, 102, 241, 0.25)', border: '#6366f1', textX: 640, textY: 160, material: 'Hardwood: 35 sq yds | Baseboard: 64 LF' },
+      { id: 'bedB', name: 'Unit B - Bedroom 1', area: 210, path: 'M 460,80 L 580,80 L 580,240 L 460,240 Z', color: 'rgba(6, 182, 212, 0.25)', border: '#06b6d4', textX: 520, textY: 160, material: 'Carpet: 23 sq yds | Baseboard: 55 LF' },
+      { id: 'kitchenB', name: 'Unit B - Kitchen', area: 180, path: 'M 580,240 L 700,240 L 700,380 L 580,380 Z', color: 'rgba(16, 185, 129, 0.25)', border: '#10b981', textX: 640, textY: 310, material: 'Vinyl plank: 20 sq yds | Cabinets: 12 LF' },
+      { id: 'diningB', name: 'Unit B - Dining', area: 150, path: 'M 460,240 L 580,240 L 580,380 L 460,380 Z', color: 'rgba(245, 158, 11, 0.25)', border: '#f59e0b', textX: 520, textY: 310, material: 'Hardwood: 16 sq yds | Crown molding: 48 LF' }
+    ],
+    walls: [
+      'M 90,70 L 350,70 L 350,380 L 90,380 Z',
+      'M 450,70 L 710,70 L 710,380 L 450,380 Z',
+      'M 220,70 L 220,380',
+      'M 90,240 L 350,240',
+      'M 580,70 L 580,380',
+      'M 450,240 L 710,240'
+    ],
+    fixtures: [
+      { type: 'door', label: 'Unit A Entry', x: 90, y: 160, r: 15 },
+      { type: 'door', label: 'Unit A Bed 1', x: 220, y: 120, r: 15 },
+      { type: 'door', label: 'Unit A Kitchen', x: 160, y: 240, r: 15 },
+      { type: 'door', label: 'Unit A Deck', x: 280, y: 380, r: 15 },
+      { type: 'door', label: 'Unit B Entry', x: 710, y: 160, r: 15 },
+      { type: 'door', label: 'Unit B Bed 1', x: 580, y: 120, r: 15 },
+      { type: 'door', label: 'Unit B Kitchen', x: 640, y: 240, r: 15 },
+      { type: 'door', label: 'Unit B Deck', x: 520, y: 380, r: 15 },
+      { type: 'window', label: 'Unit A Window 1', x: 150, y: 70, w: 40, h: 4 },
+      { type: 'window', label: 'Unit A Window 2', x: 280, y: 70, w: 40, h: 4 },
+      { type: 'window', label: 'Unit A Window 3', x: 90, y: 300, w: 4, h: 40 },
+      { type: 'window', label: 'Unit B Window 1', x: 610, y: 70, w: 40, h: 4 },
+      { type: 'window', label: 'Unit B Window 2', x: 480, y: 70, w: 40, h: 4 },
+      { type: 'window', label: 'Unit B Window 3', x: 710, y: 300, w: 4, h: 40 }
+    ],
+    materials: [
+      { name: 'Hardwood Flooring Finish', qty: '100 Sq Yds' },
+      { name: 'Plush Bedroom Carpeting', qty: '46 Sq Yds' },
+      { name: 'Vinyl Plank Flooring Finish', qty: '40 Sq Yds' },
+      { name: 'Composition Asphalt Shingles', qty: '28 Sqs' },
+      { name: 'Fiber Cement Lap Siding', qty: '34 Sqs' },
+      { name: 'Type X 5/8" Drywall (4x12)', qty: '480 Sheets' },
+      { name: '2x6 Timber Studs (8\' framing)', qty: '620 Pcs' },
+      { name: 'Double Pane Insulated Windows', qty: '16 Sets' },
+      { name: 'Solid Core Timber Passage Doors', qty: '12 Sets' }
+    ]
   }
 };
 
@@ -1068,15 +1121,22 @@ function initSimulator() {
 
     if (!currentBlueprint) return;
 
-    // If it's a custom blueprint and we have an image data URL, draw the image first
+    // If it's a custom blueprint and we have an image data URL, or if the current blueprint has a predefined imageUrl, draw the image
+    let bgUrl = null;
     if (selectBlueprint.value === 'custom' && customBlueprintDataUrl) {
+      bgUrl = customBlueprintDataUrl;
+    } else if (currentBlueprint && currentBlueprint.imageUrl) {
+      bgUrl = currentBlueprint.imageUrl;
+    }
+
+    if (bgUrl) {
       const imgEl = document.createElementNS('http://www.w3.org/2000/svg', 'image');
-      imgEl.setAttributeNS('http://www.w3.org/1999/xlink', 'href', customBlueprintDataUrl);
+      imgEl.setAttributeNS('http://www.w3.org/1999/xlink', 'href', bgUrl);
       imgEl.setAttribute('x', '10');
       imgEl.setAttribute('y', '10');
       imgEl.setAttribute('width', '780');
       imgEl.setAttribute('height', '460');
-      imgEl.setAttribute('opacity', '0.25');
+      imgEl.setAttribute('opacity', '0.35'); // Cleaner layout visibility
       drawingsGroup.appendChild(imgEl);
     }
 
