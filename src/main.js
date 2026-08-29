@@ -1024,6 +1024,7 @@ function initSimulator() {
     const newY = Math.max(10, Math.min(490, mouseCoords.y));
 
     const { type, id, element } = selectedMarkup;
+    let activeGuideLines = [];
 
     if (activeDragHandle !== null) {
       // Dragging a vertex handle
@@ -1031,6 +1032,11 @@ function initSimulator() {
         const room = currentBlueprint.rooms.find(r => r.id === id);
         if (room) {
           const points = parseSvgPathPoints(room.path);
+          const snap = getSnapCoordinates(mouseCoords.x, mouseCoords.y, points, activeDragHandle, e.shiftKey);
+          const newX = Math.max(10, Math.min(790, snap.x));
+          const newY = Math.max(10, Math.min(490, snap.y));
+          activeGuideLines = snap.guideLines;
+
           points[activeDragHandle] = { x: newX, y: newY };
           room.path = generateSvgPathFromPoints(points);
           element.setAttribute('d', room.path);
@@ -1049,6 +1055,11 @@ function initSimulator() {
       } else if (type === 'manual-area') {
         const markup = manualMarkups.find(m => m.id === id);
         if (markup) {
+          const snap = getSnapCoordinates(mouseCoords.x, mouseCoords.y, markup.points, activeDragHandle, e.shiftKey);
+          const newX = Math.max(10, Math.min(790, snap.x));
+          const newY = Math.max(10, Math.min(490, snap.y));
+          activeGuideLines = snap.guideLines;
+
           markup.points[activeDragHandle] = { x: newX, y: newY };
           const pointsStr = markup.points.map(p => `${p.x},${p.y}`).join(' ');
           element.setAttribute('points', pointsStr);
@@ -1065,9 +1076,16 @@ function initSimulator() {
         const room = currentBlueprint.rooms.find(r => r.id === id);
         if (room) {
           const points = parseSvgPathPoints(room.path);
+          const rawRefX = mouseCoords.x + shapeDragStartOffset[0].x;
+          const rawRefY = mouseCoords.y + shapeDragStartOffset[0].y;
+          const snap = getSnapCoordinates(rawRefX, rawRefY, points, null, e.shiftKey);
+          activeGuideLines = snap.guideLines;
+          const deltaX = snap.x - rawRefX;
+          const deltaY = snap.y - rawRefY;
+
           const shiftedPoints = points.map((p, idx) => ({
-            x: Math.max(10, Math.min(790, mouseCoords.x + shapeDragStartOffset[idx].x)),
-            y: Math.max(10, Math.min(490, mouseCoords.y + shapeDragStartOffset[idx].y))
+            x: Math.max(10, Math.min(790, mouseCoords.x + shapeDragStartOffset[idx].x + deltaX)),
+            y: Math.max(10, Math.min(490, mouseCoords.y + shapeDragStartOffset[idx].y + deltaY))
           }));
           room.path = generateSvgPathFromPoints(shiftedPoints);
           element.setAttribute('d', room.path);
@@ -1086,9 +1104,16 @@ function initSimulator() {
       } else if (type === 'manual-area') {
         const markup = manualMarkups.find(m => m.id === id);
         if (markup) {
+          const rawRefX = mouseCoords.x + shapeDragStartOffset[0].x;
+          const rawRefY = mouseCoords.y + shapeDragStartOffset[0].y;
+          const snap = getSnapCoordinates(rawRefX, rawRefY, markup.points, null, e.shiftKey);
+          activeGuideLines = snap.guideLines;
+          const deltaX = snap.x - rawRefX;
+          const deltaY = snap.y - rawRefY;
+
           const shiftedPoints = markup.points.map((p, idx) => ({
-            x: Math.max(10, Math.min(790, mouseCoords.x + shapeDragStartOffset[idx].x)),
-            y: Math.max(10, Math.min(490, mouseCoords.y + shapeDragStartOffset[idx].y))
+            x: Math.max(10, Math.min(790, mouseCoords.x + shapeDragStartOffset[idx].x + deltaX)),
+            y: Math.max(10, Math.min(490, mouseCoords.y + shapeDragStartOffset[idx].y + deltaY))
           }));
           markup.points = shiftedPoints;
           const pointsStr = shiftedPoints.map(p => `${p.x},${p.y}`).join(' ');
@@ -1097,16 +1122,26 @@ function initSimulator() {
       } else if (type === 'manual-point') {
         const markup = manualMarkups.find(m => m.id === id);
         if (markup) {
-          const finalX = Math.max(10, Math.min(790, mouseCoords.x + shapeDragStartOffset.x));
-          const finalY = Math.max(10, Math.min(490, mouseCoords.y + shapeDragStartOffset.y));
+          const rawX = mouseCoords.x + shapeDragStartOffset.x;
+          const rawY = mouseCoords.y + shapeDragStartOffset.y;
+          const snap = getSnapCoordinates(rawX, rawY, [], null, e.shiftKey);
+          activeGuideLines = snap.guideLines;
+
+          const finalX = Math.max(10, Math.min(790, snap.x));
+          const finalY = Math.max(10, Math.min(490, snap.y));
           markup.x = finalX;
           markup.y = finalY;
           element.setAttribute('cx', finalX);
           element.setAttribute('cy', finalY);
         }
       } else if (type === 'fixture') {
-        const finalX = Math.max(10, Math.min(790, mouseCoords.x + shapeDragStartOffset.x));
-        const finalY = Math.max(10, Math.min(490, mouseCoords.y + shapeDragStartOffset.y));
+        const rawX = mouseCoords.x + shapeDragStartOffset.x;
+        const rawY = mouseCoords.y + shapeDragStartOffset.y;
+        const snap = getSnapCoordinates(rawX, rawY, [], null, e.shiftKey);
+        activeGuideLines = snap.guideLines;
+
+        const finalX = Math.max(10, Math.min(790, snap.x));
+        const finalY = Math.max(10, Math.min(490, snap.y));
         element.setAttribute('cx', finalX);
         element.setAttribute('cy', finalY);
         
@@ -1118,7 +1153,7 @@ function initSimulator() {
       }
     }
 
-    drawSelectionHandles();
+    drawSelectionHandles(activeGuideLines);
     updatePropertiesCardValues();
     updateCostEstimates();
   });
@@ -1127,6 +1162,7 @@ function initSimulator() {
     activeDragHandle = null;
     isDraggingShape = false;
     shapeDragStartOffset = null;
+    drawSelectionHandles([]); // clear snap guide lines on mouseup
   });
 
   // Key bindings helper to finish area with Enter or cancel with Escape
@@ -3236,10 +3272,150 @@ function deselectMarkup() {
   if (card) card.style.display = 'none';
 }
 
-function drawSelectionHandles() {
+function getSnapCoordinates(rawX, rawY, currentPoints = [], activeIndex = null, isShiftPressed = false) {
+  let snappedX = rawX;
+  let snappedY = rawY;
+  const guideLines = [];
+
+  const targetXCoords = new Set();
+  const targetYCoords = new Set();
+
+  // 1. Collect points from current blueprint rooms
+  if (currentBlueprint && currentBlueprint.rooms) {
+    currentBlueprint.rooms.forEach(r => {
+      const pts = parseSvgPathPoints(r.path);
+      pts.forEach(p => {
+        targetXCoords.add(p.x);
+        targetYCoords.add(p.y);
+      });
+    });
+  }
+
+  // 2. Collect points from manual markups
+  if (manualMarkups) {
+    manualMarkups.forEach(m => {
+      if (m.points) {
+        m.points.forEach(p => {
+          targetXCoords.add(p.x);
+          targetYCoords.add(p.y);
+        });
+      } else if (m.x !== undefined && m.y !== undefined) {
+        targetXCoords.add(m.x);
+        targetYCoords.add(m.y);
+      }
+    });
+  }
+
+  // 3. Grid lines (20px grid intervals)
+  for (let gx = 20; gx < 800; gx += 20) targetXCoords.add(gx);
+  for (let gy = 20; gy < 500; gy += 20) targetYCoords.add(gy);
+
+  // 4. Shift key snapping: Snap to same edge / orthogonal line of other points in current polygon or floorplan
+  if (isShiftPressed && currentPoints && currentPoints.length > 0) {
+    if (activeIndex !== null && activeIndex !== undefined && activeIndex >= 0) {
+      const n = currentPoints.length;
+      const prevPt = currentPoints[(activeIndex - 1 + n) % n];
+      const nextPt = currentPoints[(activeIndex + 1) % n];
+
+      // Check orthogonal alignment with adjacent points
+      if (Math.abs(rawX - prevPt.x) <= Math.abs(rawY - prevPt.y)) {
+        snappedX = prevPt.x;
+        guideLines.push({ type: 'v', x: prevPt.x });
+      } else {
+        snappedY = prevPt.y;
+        guideLines.push({ type: 'h', y: prevPt.y });
+      }
+
+      if (Math.abs(rawX - nextPt.x) < 20) {
+        snappedX = nextPt.x;
+        if (!guideLines.some(g => g.type === 'v' && g.x === nextPt.x)) {
+          guideLines.push({ type: 'v', x: nextPt.x });
+        }
+      }
+      if (Math.abs(rawY - nextPt.y) < 20) {
+        snappedY = nextPt.y;
+        if (!guideLines.some(g => g.type === 'h' && g.y === nextPt.y)) {
+          guideLines.push({ type: 'h', y: nextPt.y });
+        }
+      }
+    } else {
+      // Shift key when translating or moving point
+      targetXCoords.forEach(tx => {
+        if (Math.abs(rawX - tx) < 20) {
+          snappedX = tx;
+          guideLines.push({ type: 'v', x: tx });
+        }
+      });
+      targetYCoords.forEach(ty => {
+        if (Math.abs(rawY - ty) < 20) {
+          snappedY = ty;
+          guideLines.push({ type: 'h', y: ty });
+        }
+      });
+    }
+  }
+
+  // 5. Automatic threshold snapping (when within 10px threshold)
+  const threshold = isShiftPressed ? 20 : 10;
+
+  if (snappedX === rawX) {
+    let minDx = threshold;
+    let closestX = null;
+    targetXCoords.forEach(tx => {
+      const dx = Math.abs(rawX - tx);
+      if (dx < minDx) {
+        minDx = dx;
+        closestX = tx;
+      }
+    });
+    if (closestX !== null) {
+      snappedX = closestX;
+      guideLines.push({ type: 'v', x: closestX });
+    }
+  }
+
+  if (snappedY === rawY) {
+    let minDy = threshold;
+    let closestY = null;
+    targetYCoords.forEach(ty => {
+      const dy = Math.abs(rawY - ty);
+      if (dy < minDy) {
+        minDy = dy;
+        closestY = ty;
+      }
+    });
+    if (closestY !== null) {
+      snappedY = closestY;
+      guideLines.push({ type: 'h', y: closestY });
+    }
+  }
+
+  return { x: snappedX, y: snappedY, guideLines };
+}
+
+function drawSelectionHandles(guideLines = []) {
   const selectionGroup = document.getElementById('markup-selection-group');
   if (!selectionGroup) return;
   selectionGroup.innerHTML = '';
+
+  if (guideLines && guideLines.length > 0) {
+    guideLines.forEach(g => {
+      const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+      line.setAttribute('class', 'snap-guide-line');
+      if (g.type === 'v') {
+        line.setAttribute('x1', g.x);
+        line.setAttribute('y1', 0);
+        line.setAttribute('x2', g.x);
+        line.setAttribute('y2', 500);
+      } else {
+        line.setAttribute('x1', 0);
+        line.setAttribute('y1', g.y);
+        line.setAttribute('x2', 800);
+        line.setAttribute('y2', g.y);
+      }
+      selectionGroup.appendChild(line);
+    });
+  }
 
   if (!selectedMarkup) return;
 

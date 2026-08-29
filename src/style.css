@@ -2066,6 +2066,14 @@ a {
   pointer-events: none;
 }
 
+.snap-guide-line {
+  stroke: #00f2fe;
+  stroke-width: 1;
+  stroke-dasharray: 5, 3;
+  pointer-events: none;
+  filter: drop-shadow(0 0 3px #00f2fe);
+}
+
 .markup-drag-handle {
   fill: #ffffff;
   stroke: #00f2fe;
