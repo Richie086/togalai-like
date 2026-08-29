@@ -288,155 +288,467 @@
               </div>
             </div>
 
-            <!-- Right Side: Interactive Drawing Board -->
-            <div class="simulator-panel panel-canvas glass-card">
-              <div class="canvas-header">
-                <div class="canvas-title">
-                  <span class="title-main" id="canvas-blueprint-title">Commercial Office Space</span>
-                  <span class="title-sub" id="canvas-blueprint-engine">Engine: Idle</span>
-                </div>
-                <div class="canvas-actions" style="display: flex; gap: 0.5rem; align-items: center;">
-                  <!-- Vector Markup Controls -->
-                  <div class="markup-tools" style="display: flex; gap: 0.25rem; border-right: 1.5px solid var(--slate-border); padding-right: 0.75rem; margin-right: 0.25rem;">
-                    <button class="canvas-btn markup-tool-btn active" id="btn-markup-select" title="Select / Edit Takeoffs & Markups (Select a room or markup to drag, resize, or edit)" style="display: flex; align-items: center; justify-content: center;">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.9rem; height: 0.9rem;">
-                        <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />
-                        <path d="M13 13l6 6" />
-                      </svg>
-                    </button>
-                    <button class="canvas-btn markup-tool-btn" id="btn-markup-area" title="Add Area Boundary (Click on canvas to draw polygon)" style="display: flex; align-items: center; justify-content: center;">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.9rem; height: 0.9rem;"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" /></svg>
-                    </button>
-                    <button class="canvas-btn markup-tool-btn" id="btn-markup-point" title="Count Fixture (Click on canvas to drop door/window marker)" style="display: flex; align-items: center; justify-content: center;">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.9rem; height: 0.9rem;"><circle cx="12" cy="12" r="10" /><path d="M12 8v8M8 12h8" /></svg>
-                    </button>
-                    <button class="canvas-btn markup-tool-btn" id="btn-markup-clear" title="Clear Manual Markups" style="color: var(--rose); display: flex; align-items: center; justify-content: center;">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.9rem; height: 0.9rem;"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" /></svg>
-                    </button>
+            <!-- Right Side: Interactive Drawing Board (Bluebeam Revu Studio Layout) -->
+            <div class="simulator-panel panel-canvas glass-card bluebeam-workspace" style="padding: 0; overflow: hidden; display: flex; flex-direction: column;">
+              
+              <!-- 1. Top Bluebeam Header & Menu Ribbon -->
+              <div class="bluebeam-topbar" style="background: #090e1a; border-bottom: 1.5px solid var(--slate-border); display: flex; flex-direction: column; position: relative; z-index: 100; overflow: visible;">
+                <div class="bluebeam-menubar" style="display: flex; align-items: center; gap: 0.75rem; padding: 0.35rem 0.75rem; font-size: 0.75rem; font-family: var(--font-sans); background: rgba(15, 23, 42, 0.8); border-bottom: 1px solid rgba(255,255,255,0.05); position: relative; z-index: 101; overflow: visible;">
+                  <div class="bluebeam-menu-logo" style="display: flex; align-items: center; gap: 0.35rem; margin-right: 0.5rem;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" style="width: 1rem; height: 1rem;"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 7h10v10H7z"/></svg>
+                    <span style="font-weight: 800; letter-spacing: 0.5px; color: #ffffff;">REVU</span>
                   </div>
-                  <button class="canvas-btn" id="btn-zoom-in" title="Zoom In">+</button>
-                  <button class="canvas-btn" id="btn-zoom-out" title="Zoom Out">-</button>
-                  <button class="canvas-btn" id="btn-reset-canvas" title="Reset View">⟲</button>
+                  <div class="bluebeam-menu-item" id="menu-file" style="color: var(--text-muted); cursor: pointer; position: relative; padding: 0.15rem 0.45rem; border-radius: 3px; transition: all 0.2s;">File ▾
+                    <div class="bluebeam-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #0f172a; border: 1.5px solid var(--slate-border); border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; min-width: 190px; padding: 0.3rem 0;">
+                      <div class="dropdown-item" id="dropdown-export-summary" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📄 Export Markups Summary</div>
+                      <div class="dropdown-item" id="dropdown-flatten-markups" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🔒 Flatten Markups Layer</div>
+                      <div class="dropdown-item" id="dropdown-print" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🖨️ Print Blueprint View</div>
+                    </div>
+                  </div>
+                  <div class="bluebeam-menu-item" id="menu-edit" style="color: var(--text-muted); cursor: pointer; position: relative; padding: 0.15rem 0.45rem; border-radius: 3px; transition: all 0.2s;">Edit ▾
+                    <div class="bluebeam-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #0f172a; border: 1.5px solid var(--slate-border); border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; min-width: 180px; padding: 0.3rem 0;">
+                      <div class="dropdown-item" id="dropdown-edit-undo" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">↩️ Undo Point</div>
+                      <div class="dropdown-item" id="dropdown-edit-clear" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🗑️ Clear Markups</div>
+                      <div class="dropdown-item" id="dropdown-edit-selectall" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🎯 Select All Rooms</div>
+                    </div>
+                  </div>
+                  <div class="bluebeam-menu-item" id="menu-view" style="color: var(--text-muted); cursor: pointer; position: relative; padding: 0.15rem 0.45rem; border-radius: 3px; transition: all 0.2s;">View ▾
+                    <div class="bluebeam-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #0f172a; border: 1.5px solid var(--slate-border); border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; min-width: 180px; padding: 0.3rem 0;">
+                      <div class="dropdown-item" id="dropdown-view-zoomin" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">➕ Zoom In</div>
+                      <div class="dropdown-item" id="dropdown-view-zoomout" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">➖ Zoom Out</div>
+                      <div class="dropdown-item" id="dropdown-view-reset" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">⟲ Reset View</div>
+                      <div class="dropdown-item" id="dropdown-view-fullscreen" style="padding: 0.4rem 0.8rem; color: var(--cyan); cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">⛶ Toggle Fullscreen</div>
+                    </div>
+                  </div>
+                  <div class="bluebeam-menu-item" id="menu-document" style="color: var(--text-muted); cursor: pointer; position: relative; padding: 0.15rem 0.45rem; border-radius: 3px; transition: all 0.2s;">Document ▾
+                    <div class="bluebeam-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #0f172a; border: 1.5px solid var(--slate-border); border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; min-width: 180px; padding: 0.3rem 0;">
+                      <div class="dropdown-item" id="dropdown-doc-scale" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📐 Scale Setup</div>
+                      <div class="dropdown-item" id="dropdown-doc-rotate" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🔄 Rotate Canvas 90°</div>
+                    </div>
+                  </div>
+                  <div class="bluebeam-menu-item" id="menu-tools" style="color: var(--text-muted); cursor: pointer; position: relative; padding: 0.15rem 0.45rem; border-radius: 3px; transition: all 0.2s;">Tools ▾
+                    <div class="bluebeam-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #0f172a; border: 1.5px solid var(--slate-border); border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; min-width: 190px; padding: 0.3rem 0;">
+                      <div class="dropdown-item" id="dropdown-tools-select" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">↖️ Select / Edit Tool</div>
+                      <div class="dropdown-item" id="dropdown-tools-area" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📐 Area Takeoff (SF)</div>
+                      <div class="dropdown-item" id="dropdown-tools-wall" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📏 Wall Linear (LF)</div>
+                      <div class="dropdown-item" id="dropdown-tools-count" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🔘 Fixture Count</div>
+                      <div class="dropdown-item" id="dropdown-df-launch" style="padding: 0.4rem 0.8rem; color: var(--cyan); cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🪣 Dynamic Fill...</div>
+                      <div class="dropdown-item" id="dropdown-calibrate" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📐 Calibrate Scale</div>
+                    </div>
+                  </div>
+                  <div class="bluebeam-menu-item" id="menu-window" style="color: var(--text-muted); cursor: pointer; position: relative; padding: 0.15rem 0.45rem; border-radius: 3px; transition: all 0.2s;">Window ▾
+                    <div class="bluebeam-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #0f172a; border: 1.5px solid var(--slate-border); border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; min-width: 195px; padding: 0.3rem 0;">
+                      <div class="dropdown-item" id="dropdown-win-toolchest" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🧰 Tool Chest</div>
+                      <div class="dropdown-item" id="dropdown-win-measurements" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📐 Measurements</div>
+                      <div class="dropdown-item" id="dropdown-win-properties" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">⚙️ Markup Properties</div>
+                      <div class="dropdown-item" id="dropdown-win-markupslist" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📋 Markups List</div>
+                      <div class="dropdown-item" id="dropdown-win-togglesidebar" style="padding: 0.4rem 0.8rem; color: var(--cyan); cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">🖼️ Toggle Sidebar Panel</div>
+                    </div>
+                  </div>
+                  <div class="bluebeam-menu-item" id="menu-help" style="color: var(--text-muted); cursor: pointer; position: relative; padding: 0.15rem 0.45rem; border-radius: 3px; transition: all 0.2s;">Help ▾
+                    <div class="bluebeam-dropdown" style="display: none; position: absolute; top: 100%; left: 0; background: #0f172a; border: 1.5px solid var(--slate-border); border-radius: 6px; box-shadow: 0 10px 25px rgba(0,0,0,0.5); z-index: 1000; min-width: 180px; padding: 0.3rem 0;">
+                      <div class="dropdown-item" id="dropdown-help-guide" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">📖 Revu User Guide</div>
+                      <div class="dropdown-item" id="dropdown-help-shortcuts" style="padding: 0.4rem 0.8rem; color: #fff; cursor: pointer; display: flex; align-items: center; gap: 0.4rem;">⌨️ Keyboard Shortcuts</div>
+                    </div>
+                  </div>
+
+                  <button id="btn-bluebeam-fullscreen" class="bluebeam-fullscreen-btn" title="Toggle Fullscreen Blueprint Workspace" style="margin-left: auto; background: rgba(6,182,212,0.15); border: 1px solid var(--cyan); color: var(--cyan); border-radius: 4px; padding: 0.2rem 0.55rem; font-size: 0.7rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.35rem; transition: all 0.2s;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.85rem; height: 0.85rem;"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+                    <span>Fullscreen</span>
+                  </button>
+                </div>
+                
+                <!-- Active Document Tab Strip -->
+                <div class="bluebeam-doc-tabs" style="display: flex; align-items: center; background: #0b1120; padding: 0.25rem 0.5rem 0 0.5rem; gap: 0.25rem;">
+                  <div class="bluebeam-doc-tab active" id="doc-tab-title" style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid var(--slate-border); border-bottom: none; border-radius: 6px 6px 0 0; padding: 0.35rem 0.75rem; font-size: 0.75rem; color: #ffffff; display: flex; align-items: center; gap: 0.4rem; font-family: var(--font-sans); font-weight: 600;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="var(--cyan)" stroke-width="2" style="width:0.85rem; height:0.85rem;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+                    <span id="bb-doc-name">Duplex Residential Home (Plan D-577)</span>
+                    <span class="bb-doc-page" style="background: rgba(99,102,241,0.2); color: var(--indigo-light); font-size: 0.65rem; padding: 0.1rem 0.3rem; border-radius: 3px; margin-left: 0.25rem;">Page 1/1</span>
+                  </div>
                 </div>
               </div>
-              
-              <div class="canvas-body" id="blueprint-canvas-container">
-                <!-- SVG Blueprint Content (will be dynamically updated / controlled via JS) -->
-                <svg id="blueprint-svg" viewBox="0 0 800 500" class="blueprint-vector">
-                  <!-- Definitions for grid pattern, gradients, and filters -->
-                  <defs>
-                    <pattern id="grid-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
-                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1" />
-                    </pattern>
-                    <filter id="neon-glow" x="-10%" y="-10%" width="120%" height="120%">
-                      <feGaussianBlur stdDeviation="3" result="blur" />
-                      <feMerge>
-                        <feMergeNode in="blur" />
-                        <feMergeNode in="SourceGraphic" />
-                      </feMerge>
-                    </filter>
-                  </defs>
-                  
-                  <!-- Grid Background -->
-                  <rect width="100%" height="100%" fill="url(#grid-pattern)" />
-                  
-                  <!-- Scanner Line Overlay (Animated via JS) -->
-                  <line id="scanner-line" x1="0" y1="0" x2="800" y2="0" stroke="#00f2fe" stroke-width="2" style="display: none; filter: url(#neon-glow);" />
-                  
-                  <!-- Blueprint Drawings will be generated by js in the main script -->
-                  <g id="blueprint-drawings-group"></g>
-                  
-                  <!-- AI Highlight Overlays -->
-                  <g id="ai-highlights-group"></g>
 
-                  <!-- Tooltips overlay -->
-                  <g id="canvas-tooltips-group"></g>
-
-                  <!-- Markup Selection Overlay (handles, outlines) -->
-                  <g id="markup-selection-group"></g>
-                </svg>
-
-                <div class="canvas-overlay-message" id="canvas-prompt-overlay">
-                  <div class="overlay-content">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="overlay-icon">
-                      <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
-                      <line x1="9" y1="3" x2="9" y2="21" />
-                      <line x1="15" y1="3" x2="15" y2="21" />
-                      <line x1="3" y1="9" x2="21" y2="9" />
-                      <line x1="3" y1="15" x2="21" y2="15" />
-                    </svg>
-                    <h4>Interactive Takeoff Ready</h4>
-                    <p>Click "Run AI Takeoff Analysis" to start the computer vision parser.</p>
-                  </div>
-                </div>
-
-                <!-- Live tooltip box -->
-                <div class="html-tooltip" id="canvas-html-tooltip"></div>
-
-                <!-- Floating Markup Properties Card (Bluebeam Style) -->
-                <div class="canvas-takeoff-legend" id="canvas-properties-card" style="position: absolute; bottom: 1rem; left: 1rem; width: 280px; background: rgba(13, 21, 39, 0.85); backdrop-filter: blur(10px); border: 1.5px solid var(--slate-border); border-radius: 8px; padding: 0.75rem; z-index: 100; display: none; flex-direction: column; gap: 0.5rem; transition: all 0.3s ease;">
-                  <div style="font-size: 0.75rem; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.25rem; margin-bottom: 0.25rem; font-family: var(--font-sans); display: flex; justify-content: space-between; align-items: center;">
-                    <span>Markup Properties</span>
-                    <button id="btn-close-properties" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 1rem; padding: 0; line-height: 1;">&times;</button>
-                  </div>
-                  
-                  <div style="display: flex; flex-direction: column; gap: 0.25rem;">
-                    <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-sans);">Name / Label</label>
-                    <input type="text" id="prop-markup-name" style="background: rgba(30, 41, 59, 0.5); border: 1.5px solid var(--slate-border); border-radius: 4px; padding: 0.3rem 0.5rem; color: #ffffff; font-size: 0.75rem; font-family: var(--font-sans); outline: none; width: 100%; box-sizing: border-box;" />
-                  </div>
-                  
-                  <div style="display: flex; gap: 0.5rem;">
-                    <div style="flex: 1; display: flex; flex-direction: column; gap: 0.25rem;">
-                      <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-sans);">Fill Color</label>
-                      <input type="color" id="prop-markup-fill" style="width: 100%; height: 26px; border: 1.5px solid var(--slate-border); border-radius: 4px; background: none; cursor: pointer; padding: 0; outline: none; box-sizing: border-box;" />
-                    </div>
-                    <div style="flex: 1; display: flex; flex-direction: column; gap: 0.25rem;">
-                      <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-family: var(--font-sans);">Border Color</label>
-                      <input type="color" id="prop-markup-border" style="width: 100%; height: 26px; border: 1.5px solid var(--slate-border); border-radius: 4px; background: none; cursor: pointer; padding: 0; outline: none; box-sizing: border-box;" />
-                    </div>
-                  </div>
-                  
-                  <div style="display: flex; gap: 0.5rem; background: rgba(255,255,255,0.02); border-radius: 4px; padding: 0.4rem; border: 1px solid rgba(255,255,255,0.04); font-family: var(--font-sans);">
-                    <div style="flex: 1; text-align: center;">
-                      <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase;">Area</div>
-                      <div id="prop-markup-area" style="font-size: 0.8rem; font-weight: 700; color: var(--cyan); margin-top: 0.1rem;">0 SF</div>
-                    </div>
-                    <div style="flex: 1; text-align: center; border-left: 1px solid rgba(255,255,255,0.08);">
-                      <div style="font-size: 0.6rem; color: var(--text-muted); text-transform: uppercase;">Perimeter</div>
-                      <div id="prop-markup-perimeter" style="font-size: 0.8rem; font-weight: 700; color: var(--amber); margin-top: 0.1rem;">0 LF</div>
-                    </div>
-                  </div>
-                  
-                  <button id="btn-delete-markup" style="width: 100%; background: rgba(244, 63, 94, 0.15); border: 1.5px solid var(--rose); border-radius: 4px; color: var(--rose); font-size: 0.75rem; font-weight: 600; padding: 0.4rem; cursor: pointer; transition: all 0.2s; display: flex; align-items: center; justify-content: center; gap: 0.25rem; font-family: var(--font-sans);">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.8rem; height: 0.8rem;"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /></svg>
-                    Delete Markup
+              <!-- 2. Main Bluebeam Workspace Body (Sidebar Dock + Sub-Panels + Canvas) -->
+              <div class="bluebeam-workspace-body" style="display: flex; flex: 1; position: relative; min-height: 480px;">
+                <!-- Left Icon Navigation Dock (Bluebeam Revu Style Tabs) -->
+                <div class="bluebeam-sidebar-dock" style="width: 48px; background: #070c17; border-right: 1.5px solid var(--slate-border); display: flex; flex-direction: column; align-items: center; padding: 0.5rem 0; gap: 0.5rem; z-index: 20;">
+                  <button class="bb-dock-btn active" data-tab="toolchest" title="Tool Chest (Takeoff Tools & Presets)" style="width: 36px; height: 36px; border-radius: 6px; border: 1.5px solid transparent; background: none; color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; transition: all 0.2s;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1.1rem; height: 1.1rem;"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                  </button>
+                  <button class="bb-dock-btn" data-tab="measurements" title="Measurements & Scale Calibration" style="width: 36px; height: 36px; border-radius: 6px; border: 1.5px solid transparent; background: none; color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; transition: all 0.2s;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1.1rem; height: 1.1rem;"><path d="M2 12h20M6 12v-4M10 12v-2M14 12v-4M18 12v-2"/></svg>
+                  </button>
+                  <button class="bb-dock-btn" data-tab="properties" title="Markup Properties Panel" style="width: 36px; height: 36px; border-radius: 6px; border: 1.5px solid transparent; background: none; color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; transition: all 0.2s;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1.1rem; height: 1.1rem;"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+                  </button>
+                  <button class="bb-dock-btn" data-tab="markupslist" title="Markups List (Quantity Takeoff Table)" style="width: 36px; height: 36px; border-radius: 6px; border: 1.5px solid transparent; background: none; color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; transition: all 0.2s;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1.1rem; height: 1.1rem;"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                  </button>
+                  <button class="bb-dock-btn" data-tab="thumbnails" title="Documents & Thumbnails" style="width: 36px; height: 36px; border-radius: 6px; border: 1.5px solid transparent; background: none; color: var(--text-muted); cursor: pointer; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 0.15rem; transition: all 0.2s;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 1.1rem; height: 1.1rem;"><rect x="3" y="3" width="18" height="18" rx="2"/><line x1="3" y1="9" x2="21" y2="9"/><line x1="9" y1="21" x2="9" y2="9"/></svg>
                   </button>
                 </div>
 
-                <!-- Floating Canvas Takeoff Legend -->
-                <div class="canvas-takeoff-legend" id="canvas-legend" style="position: absolute; bottom: 1rem; right: 1rem; background: rgba(13, 21, 39, 0.85); backdrop-filter: blur(10px); border: 1.5px solid var(--slate-border); border-radius: 8px; padding: 0.75rem; z-index: 10; display: none; flex-direction: column; gap: 0.5rem; transition: all 0.3s ease;">
-                  <div style="font-size: 0.75rem; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.25rem; margin-bottom: 0.25rem; font-family: var(--font-sans);">Takeoff Legend</div>
-                  <div class="legend-item" data-target-layer="areas" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
-                    <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(99, 102, 241, 0.5); border: 1px solid #6366f1;"></span>
-                    <span>Measured Areas (Rooms)</span>
+                <!-- Sub-Panels Container (Docked next to sidebar) -->
+                <div class="bluebeam-panel-container" id="bb-panel-container" style="width: 260px; background: rgba(11, 17, 32, 0.95); backdrop-filter: blur(10px); border-right: 1.5px solid var(--slate-border); display: flex; flex-direction: column; z-index: 15;">
+                  
+                  <!-- 1. Tool Chest Panel -->
+                  <div class="bb-panel active" id="bb-panel-toolchest" style="display: flex; flex-direction: column; height: 100%; padding: 0.75rem; gap: 0.75rem;">
+                    <div class="bb-panel-header" style="font-size: 0.8rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center; font-family: var(--font-sans);">
+                      <span>🧰 Tool Chest</span>
+                    </div>
+                    <div class="bb-panel-body" style="display: flex; flex-direction: column; gap: 0.85rem; overflow-y: auto;">
+                      <div class="bb-tool-group">
+                        <div class="bb-tool-group-header" style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 0.4rem;">📐 General Measurements</div>
+                        <div class="bb-tool-grid" style="display: flex; flex-direction: column; gap: 0.35rem;">
+                          <div class="bb-tool-item" id="tool-item-area" data-tool="area" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(30,41,59,0.5); border: 1px solid var(--slate-border); border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: #fff; transition: all 0.2s;">
+                            <span class="bb-tool-icon" style="width: 12px; height: 12px; border-radius: 2px; border: 1.5px solid #6366f1; background: rgba(99,102,241,0.3);"></span>
+                            <span class="bb-tool-label">Area (SF)</span>
+                          </div>
+                          <div class="bb-tool-item" id="tool-item-wall" data-tool="wall" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(30,41,59,0.5); border: 1px solid var(--slate-border); border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: #fff; transition: all 0.2s;">
+                            <span class="bb-tool-icon" style="width: 12px; height: 2px; background: #38bdf8;"></span>
+                            <span class="bb-tool-label">Wall Linear (LF)</span>
+                          </div>
+                          <div class="bb-tool-item" id="tool-item-count" data-tool="point" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(30,41,59,0.5); border: 1px solid var(--slate-border); border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: #fff; transition: all 0.2s;">
+                            <span class="bb-tool-icon" style="width: 10px; height: 10px; border-radius: 50%; background: #06b6d4;"></span>
+                            <span class="bb-tool-label">Fixture Count</span>
+                          </div>
+                          <div class="bb-tool-item" id="tool-item-dynamic-fill" data-tool="dynamicfill" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(6,182,212,0.15); border: 1px solid var(--cyan); border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: var(--cyan); font-weight: 600; transition: all 0.2s;">
+                            <span class="bb-tool-icon" style="display: flex; align-items: center; justify-content: center;">🪣</span>
+                            <span class="bb-tool-label">Dynamic Fill...</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="bb-tool-group">
+                        <div class="bb-tool-group-header" style="font-size: 0.68rem; color: var(--text-muted); font-weight: 700; text-transform: uppercase; margin-bottom: 0.4rem;">🏗️ Construction Assemblies</div>
+                        <div class="bb-tool-grid" style="display: flex; flex-direction: column; gap: 0.35rem;">
+                          <div class="bb-tool-item" data-tool="preset-drywall" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(30,41,59,0.5); border: 1px solid var(--slate-border); border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: #fff;">
+                            <span class="bb-tool-icon" style="width: 12px; height: 12px; border-radius: 2px; border: 1.5px solid #f59e0b; background: rgba(245,158,11,0.3);"></span>
+                            <span class="bb-tool-label">Drywall Partition</span>
+                          </div>
+                          <div class="bb-tool-item" data-tool="preset-flooring" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(30,41,59,0.5); border: 1px solid var(--slate-border); border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: #fff;">
+                            <span class="bb-tool-icon" style="width: 12px; height: 12px; border-radius: 2px; border: 1.5px solid #10b981; background: rgba(16,185,129,0.3);"></span>
+                            <span class="bb-tool-label">Flooring Finish</span>
+                          </div>
+                          <div class="bb-tool-item" data-tool="preset-concrete" style="display: flex; align-items: center; gap: 0.5rem; padding: 0.4rem 0.6rem; background: rgba(30,41,59,0.5); border: 1px solid var(--slate-border); border-radius: 4px; cursor: pointer; font-size: 0.75rem; color: #fff;">
+                            <span class="bb-tool-icon" style="width: 12px; height: 12px; border-radius: 2px; border: 1.5px solid #94a3b8; background: rgba(148,163,184,0.3);"></span>
+                            <span class="bb-tool-label">Concrete Slab</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="legend-item" data-target-layer="walls" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
-                    <span style="width: 10px; height: 1.5px; background: #334155;"></span>
-                    <span>Interior Walls (LF)</span>
+
+                  <!-- 2. Measurements & Scale Panel -->
+                  <div class="bb-panel" id="bb-panel-measurements" style="display: none; flex-direction: column; height: 100%; padding: 0.75rem; gap: 0.75rem;">
+                    <div class="bb-panel-header" style="font-size: 0.8rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.4rem; font-family: var(--font-sans);">
+                      <span>📐 Measurements & Scale</span>
+                    </div>
+                    <div class="bb-panel-body" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                      <div class="bb-form-group" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                        <label style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">Blueprint Scale</label>
+                        <select id="bb-scale-select" style="background: #1e293b; border: 1.5px solid var(--slate-border); border-radius: 4px; padding: 0.35rem 0.5rem; color: #fff; font-size: 0.75rem; outline: none;">
+                          <option value="0.25">1/4" = 1'-0" (Standard Residential)</option>
+                          <option value="0.125">1/8" = 1'-0" (Commercial Blueprint)</option>
+                          <option value="0.5">1/2" = 1'-0" (Detail Elevation)</option>
+                        </select>
+                      </div>
+                      <button id="btn-calibrate-scale" style="background: rgba(99,102,241,0.15); border: 1.5px solid var(--indigo); border-radius: 4px; color: var(--indigo-light); font-size: 0.75rem; font-weight: 600; padding: 0.4rem; cursor: pointer; transition: all 0.2s;">
+                        📐 Calibrate Scale
+                      </button>
+                      <div class="bb-summary-box" style="background: rgba(255,255,255,0.02); border: 1px solid rgba(255,255,255,0.05); border-radius: 4px; padding: 0.5rem; display: flex; flex-direction: column; gap: 0.4rem; font-size: 0.75rem;">
+                        <div style="display: flex; justify-content: space-between;"><span>Total Area:</span><strong id="bb-total-area-val" style="color:var(--cyan);">0 SF</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Total Walls:</span><strong id="bb-total-wall-val" style="color:var(--amber);">0 LF</strong></div>
+                        <div style="display: flex; justify-content: space-between;"><span>Openings:</span><strong id="bb-total-count-val" style="color:#ffffff;">0</strong></div>
+                      </div>
+                    </div>
                   </div>
-                  <div class="legend-item" data-target-layer="counts" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
-                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #06b6d4; border: 1px solid #ffffff;"></span>
-                    <span>Doors & Openings</span>
+
+                  <!-- 3. Properties Panel -->
+                  <div class="bb-panel" id="bb-panel-properties" style="display: none; flex-direction: column; height: 100%; padding: 0.75rem; gap: 0.75rem;">
+                    <div class="bb-panel-header" style="font-size: 0.8rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.4rem; font-family: var(--font-sans);">
+                      <span>⚙️ Markup Properties</span>
+                    </div>
+                    <div class="bb-panel-body" id="bb-properties-body-content" style="display: flex; flex-direction: column; gap: 0.6rem;">
+                      <p style="font-size: 0.75rem; color: var(--text-muted); font-style: italic;">Select any room or markup on the canvas to edit its properties.</p>
+                    </div>
                   </div>
-                  <div class="legend-item" data-target-layer="counts" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
-                    <span style="width: 10px; height: 10px; border-radius: 50%; background: #f59e0b; border: 1px solid #ffffff;"></span>
-                    <span>Window Openings</span>
+
+                  <!-- 4. Markups List Panel -->
+                  <div class="bb-panel" id="bb-panel-markupslist" style="display: none; flex-direction: column; height: 100%; padding: 0.75rem; gap: 0.75rem;">
+                    <div class="bb-panel-header" style="font-size: 0.8rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.4rem; display: flex; justify-content: space-between; align-items: center; font-family: var(--font-sans);">
+                      <span>📋 Markups List</span>
+                      <button id="btn-export-markups-csv" style="background: rgba(16,185,129,0.15); border: 1px solid var(--emerald); border-radius: 4px; color: var(--emerald); font-size: 0.65rem; font-weight: 600; padding: 0.2rem 0.4rem; cursor: pointer;">CSV</button>
+                    </div>
+                    <div class="bb-panel-body" style="display: flex; flex-direction: column; gap: 0.5rem; overflow-y: auto;">
+                      <table class="bb-markups-table" style="width: 100%; border-collapse: collapse; font-size: 0.7rem; color: #fff;">
+                        <thead>
+                          <tr style="border-bottom: 1px solid var(--slate-border); text-align: left; color: var(--text-muted);">
+                            <th style="padding: 0.3rem;">Subject</th>
+                            <th style="padding: 0.3rem;">Area</th>
+                            <th style="padding: 0.3rem;">Walls</th>
+                          </tr>
+                        </thead>
+                        <tbody id="bb-markups-tbody">
+                          <tr><td colspan="3" style="padding: 0.5rem; text-align: center; color: var(--text-muted);">No active markups</td></tr>
+                        </tbody>
+                      </table>
+                    </div>
                   </div>
-                  <div class="legend-item" data-target-layer="manual" id="legend-manual-item" style="display: none; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
-                    <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(16, 185, 129, 0.4); border: 1.5px dashed var(--emerald);"></span>
-                    <span>Manual Markups</span>
+
+                  <!-- 5. Documents / Thumbnails Panel -->
+                  <div class="bb-panel" id="bb-panel-thumbnails" style="display: none; flex-direction: column; height: 100%; padding: 0.75rem; gap: 0.75rem;">
+                    <div class="bb-panel-header" style="font-size: 0.8rem; font-weight: 700; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.4rem; font-family: var(--font-sans);">
+                      <span>📁 Documents & Layers</span>
+                    </div>
+                    <div class="bb-panel-body" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                      <div class="bb-form-group" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                        <label style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">Floorplan Preset</label>
+                        <select id="bb-preset-select" style="background: #1e293b; border: 1.5px solid var(--slate-border); border-radius: 4px; padding: 0.35rem 0.5rem; color: #fff; font-size: 0.75rem; outline: none;">
+                          <option value="duplex">Duplex Residential Home (Plan D-577)</option>
+                          <option value="commercial">Commercial Office Space</option>
+                          <option value="warehouse">Industrial Warehouse</option>
+                        </select>
+                      </div>
+                      <div class="bb-form-group" style="display: flex; flex-direction: column; gap: 0.25rem;">
+                        <label style="font-size: 0.68rem; color: var(--text-muted); font-weight: 600;">Background Image Opacity</label>
+                        <input type="range" id="bb-bg-opacity" min="0.1" max="1" step="0.05" value="0.55" style="width: 100%;">
+                      </div>
+                    </div>
                   </div>
-                  <div style="font-size: 0.65rem; color: var(--text-muted); font-style: italic; border-top: 1.5px solid rgba(255,255,255,0.08); padding-top: 0.25rem; margin-top: 0.25rem; font-family: var(--font-sans);">Hover to isolate layer</div>
+                </div>
+
+                <!-- Center Canvas Area -->
+                <div class="bluebeam-canvas-area" style="flex: 1; position: relative; display: flex; flex-direction: column; background: #070c17;">
+                  <div class="canvas-header" style="padding: 0.5rem 1rem; border-bottom: 1px solid var(--slate-border); display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.5);">
+                    <div class="canvas-title">
+                      <span class="title-main" id="canvas-blueprint-title" style="font-size: 0.9rem; font-weight: 700; color: #fff;">Duplex Residential Home (Plan D-577)</span>
+                      <span class="title-sub" id="canvas-blueprint-engine" style="font-size: 0.75rem; color: var(--cyan); margin-left: 0.5rem;">Engine: Togal.AI</span>
+                    </div>
+                    <div class="canvas-actions" style="display: flex; gap: 0.5rem; align-items: center;">
+                      <!-- Vector Markup Controls -->
+                      <div class="markup-tools" style="display: flex; gap: 0.25rem; border-right: 1.5px solid var(--slate-border); padding-right: 0.75rem; margin-right: 0.25rem;">
+                        <button class="canvas-btn markup-tool-btn active" id="btn-markup-select" title="Select / Edit Takeoffs & Markups" style="display: flex; align-items: center; justify-content: center;">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.9rem; height: 0.9rem;">
+                            <path d="M3 3l7.07 16.97 2.51-7.39 7.39-2.51L3 3z" />
+                            <path d="M13 13l6 6" />
+                          </svg>
+                        </button>
+                        <button class="canvas-btn markup-tool-btn" id="btn-markup-area" title="Add Area Boundary" style="display: flex; align-items: center; justify-content: center;">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.9rem; height: 0.9rem;"><polygon points="12 2 22 8.5 22 15.5 12 22 2 15.5 2 8.5" /></svg>
+                        </button>
+                        <button class="canvas-btn markup-tool-btn" id="btn-markup-point" title="Count Fixture" style="display: flex; align-items: center; justify-content: center;">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.9rem; height: 0.9rem;"><circle cx="12" cy="12" r="10" /><path d="M12 8v8M8 12h8" /></svg>
+                        </button>
+                        <button class="canvas-btn markup-tool-btn" id="btn-markup-clear" title="Clear Manual Markups" style="color: var(--rose); display: flex; align-items: center; justify-content: center;">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.9rem; height: 0.9rem;"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M10 11v6M14 11v6" /></svg>
+                        </button>
+                      </div>
+                      <button class="canvas-btn" id="btn-zoom-in" title="Zoom In">+</button>
+                      <button class="canvas-btn" id="btn-zoom-out" title="Zoom Out">-</button>
+                      <button class="canvas-btn" id="btn-reset-canvas" title="Reset View">⟲</button>
+                      <button class="canvas-btn" id="btn-canvas-fullscreen" title="Toggle Fullscreen Editor View" style="color: var(--cyan);">⛶</button>
+                    </div>
+                  </div>
+
+                  <!-- Contextual Top Toolbar: Markup Properties (Bluebeam Standard Ribbon Toolbar) -->
+                  <div class="canvas-properties-toolbar" id="canvas-properties-card" style="display: none; background: #0f172a; border-bottom: 1.5px solid var(--cyan); padding: 0.4rem 1rem; font-family: var(--font-sans); color: #fff; z-index: 90; box-shadow: 0 4px 15px rgba(0,0,0,0.4); align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.75rem;">
+                    <div style="display: flex; align-items: center; gap: 0.8rem; flex-wrap: wrap;">
+                      <div style="display: flex; align-items: center; gap: 0.4rem; font-size: 0.72rem; font-weight: 700; color: var(--cyan); text-transform: uppercase; letter-spacing: 0.5px; border-right: 1px solid var(--slate-border); padding-right: 0.75rem;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.85rem; height: 0.85rem;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+                        <span>Markup Properties</span>
+                      </div>
+
+                      <!-- Name / Label Input -->
+                      <div style="display: flex; align-items: center; gap: 0.35rem;">
+                        <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Name:</label>
+                        <input type="text" id="prop-markup-name" placeholder="Markup Label" style="background: rgba(30, 41, 59, 0.7); border: 1.5px solid var(--slate-border); border-radius: 4px; padding: 0.25rem 0.5rem; color: #ffffff; font-size: 0.75rem; outline: none; width: 140px;" />
+                      </div>
+
+                      <!-- Color Pickers -->
+                      <div style="display: flex; align-items: center; gap: 0.6rem; border-left: 1px solid var(--slate-border); padding-left: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.3rem;" title="Fill Color">
+                          <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Fill:</label>
+                          <input type="color" id="prop-markup-fill" style="width: 24px; height: 24px; border: 1px solid var(--slate-border); border-radius: 4px; background: none; cursor: pointer; padding: 0; outline: none;" />
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.3rem;" title="Border Color">
+                          <label style="font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600;">Border:</label>
+                          <input type="color" id="prop-markup-border" style="width: 24px; height: 24px; border: 1px solid var(--slate-border); border-radius: 4px; background: none; cursor: pointer; padding: 0; outline: none;" />
+                        </div>
+                      </div>
+
+                      <!-- Measurements Readout -->
+                      <div style="display: flex; align-items: center; gap: 0.8rem; background: rgba(255,255,255,0.03); border-radius: 4px; padding: 0.2rem 0.6rem; border: 1px solid rgba(255,255,255,0.06);">
+                        <div style="display: flex; align-items: center; gap: 0.3rem;">
+                          <span style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase;">Area:</span>
+                          <span id="prop-markup-area" style="font-size: 0.78rem; font-weight: 700; color: var(--cyan);">0 SF</span>
+                        </div>
+                        <div style="display: flex; align-items: center; gap: 0.3rem; border-left: 1px solid rgba(255,255,255,0.1); padding-left: 0.6rem;">
+                          <span style="font-size: 0.62rem; color: var(--text-muted); text-transform: uppercase;">Perim:</span>
+                          <span id="prop-markup-perimeter" style="font-size: 0.78rem; font-weight: 700; color: var(--amber);">0 LF</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Action Buttons -->
+                    <div style="display: flex; align-items: center; gap: 0.4rem;">
+                      <button id="btn-add-vertex-point" title="Add vertex point to perimeter" style="background: rgba(99, 102, 241, 0.15); border: 1px solid var(--indigo); border-radius: 4px; color: var(--indigo-light); font-size: 0.7rem; font-weight: 600; padding: 0.25rem 0.55rem; cursor: pointer; display: flex; align-items: center; gap: 0.25rem;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.75rem; height: 0.75rem;"><path d="M12 5v14M5 12h14"/></svg>
+                        + Vertex
+                      </button>
+                      <button id="btn-delete-markup" title="Delete selected markup" style="background: rgba(244, 63, 94, 0.15); border: 1px solid var(--rose); border-radius: 4px; color: var(--rose); font-size: 0.7rem; font-weight: 600; padding: 0.25rem 0.55rem; cursor: pointer; display: flex; align-items: center; gap: 0.25rem;">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 0.75rem; height: 0.75rem;"><path d="M3 6h18M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                        Delete
+                      </button>
+                      <button id="btn-close-properties" title="Close Properties Toolbar" style="background: none; border: none; color: var(--text-muted); cursor: pointer; font-size: 0.95rem; padding: 0 0.2rem; line-height: 1;">
+                        ✕
+                      </button>
+                    </div>
+                  </div>
+
+                  <div class="canvas-body" id="blueprint-canvas-container" style="flex: 1; position: relative;">
+                    <!-- Floating Dynamic Fill Toolbar (Bluebeam Revu Standard) -->
+                    <div class="bluebeam-dynamic-fill-bar" id="bb-dynamic-fill-bar" style="display: none; position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 100; background: #0f172a; border: 1.5px solid var(--cyan); border-radius: 8px; box-shadow: 0 12px 35px rgba(0,0,0,0.6); padding: 0.4rem 0.75rem; font-family: var(--font-sans); color: #fff;">
+                      <div style="display: flex; align-items: center; gap: 0.6rem; font-size: 0.75rem;">
+                        <div style="display: flex; align-items: center; gap: 0.35rem; font-weight: 700; color: var(--cyan); border-right: 1px solid var(--slate-border); padding-right: 0.6rem;">
+                          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:0.9rem; height:0.9rem;"><path d="M19 11l-8-8-8.6 8.6a2 2 0 0 0 0 2.83l5.17 5.17a2 2 0 0 0 2.83 0L19 11z"/><path d="M5 2v2"/><path d="M19 13l-4 4"/></svg>
+                          <span>Dynamic Fill</span>
+                        </div>
+                        
+                        <!-- Action Tools -->
+                        <div style="display: flex; gap: 0.25rem; border-right: 1px solid var(--slate-border); padding-right: 0.6rem;">
+                          <button class="df-tool-btn active" id="btn-df-fill" title="Paint Fill Bucket (Click inside enclosed room area to flood fill)" style="background: rgba(6,182,212,0.2); border: 1px solid var(--cyan); color: var(--cyan); padding: 0.25rem 0.55rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.3rem;">
+                            🪣 Add Fill
+                          </button>
+                          <button class="df-tool-btn" id="btn-df-boundary" title="Add Boundary Line (Draw temporary barrier line)" style="background: rgba(30,41,59,0.6); border: 1px solid var(--slate-border); color: #fff; padding: 0.25rem 0.55rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 0.3rem;">
+                            ✏️ Add Boundary
+                          </button>
+                        </div>
+
+                        <!-- Output Markups Selection Toggles -->
+                        <div style="display: flex; align-items: center; gap: 0.4rem; border-right: 1px solid var(--slate-border); padding-right: 0.6rem;">
+                          <span style="font-size: 0.65rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase;">Create:</span>
+                          <label style="display: flex; align-items: center; gap: 0.2rem; cursor: pointer; font-size: 0.7rem; color: #fff;">
+                            <input type="checkbox" id="df-opt-space" checked style="accent-color: var(--cyan);"> Space
+                          </label>
+                          <label style="display: flex; align-items: center; gap: 0.2rem; cursor: pointer; font-size: 0.7rem; color: #fff;">
+                            <input type="checkbox" id="df-opt-area" checked style="accent-color: var(--indigo);"> Area
+                          </label>
+                          <label style="display: flex; align-items: center; gap: 0.2rem; cursor: pointer; font-size: 0.7rem; color: #fff;">
+                            <input type="checkbox" id="df-opt-poly" checked style="accent-color: var(--amber);"> Wall
+                          </label>
+                        </div>
+
+                        <!-- Controls & Actions -->
+                        <div style="display: flex; align-items: center; gap: 0.35rem;">
+                          <button id="btn-df-clear" title="Clear Temporary Fills & Boundaries" style="background: rgba(239,68,68,0.15); border: 1px solid rgba(239,68,68,0.4); color: #f87171; padding: 0.25rem 0.5rem; border-radius: 4px; font-size: 0.7rem; font-weight: 600; cursor: pointer;">
+                            🧹 Clear
+                          </button>
+                          <button id="btn-df-apply" title="Apply Dynamic Fill to create markups" style="background: var(--emerald); border: none; color: #000; padding: 0.25rem 0.65rem; border-radius: 4px; font-size: 0.7rem; font-weight: 700; cursor: pointer;">
+                            ✓ Apply
+                          </button>
+                          <button id="btn-df-close" title="Close Dynamic Fill Toolbar" style="background: none; border: none; color: var(--text-muted); font-size: 0.9rem; cursor: pointer; margin-left: 0.2rem;">
+                            ✕
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- SVG Blueprint Content (will be dynamically updated / controlled via JS) -->
+                    <svg id="blueprint-svg" viewBox="0 0 800 500" class="blueprint-vector">
+                      <!-- Definitions for grid pattern, gradients, and filters -->
+                      <defs>
+                        <pattern id="grid-pattern" width="20" height="20" patternUnits="userSpaceOnUse">
+                          <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255, 255, 255, 0.03)" stroke-width="1" />
+                        </pattern>
+                        <filter id="neon-glow" x="-10%" y="-10%" width="120%" height="120%">
+                          <feGaussianBlur stdDeviation="3" result="blur" />
+                          <feMerge>
+                            <feMergeNode in="blur" />
+                            <feMergeNode in="SourceGraphic" />
+                          </feMerge>
+                        </filter>
+                      </defs>
+                      
+                      <!-- Grid Background -->
+                      <rect width="100%" height="100%" fill="url(#grid-pattern)" />
+                      
+                      <!-- Scanner Line Overlay (Animated via JS) -->
+                      <line id="scanner-line" x1="0" y1="0" x2="800" y2="0" stroke="#00f2fe" stroke-width="2" style="display: none; filter: url(#neon-glow);" />
+                      
+                      <!-- Blueprint Drawings will be generated by js in the main script -->
+                      <g id="blueprint-drawings-group"></g>
+                      
+                      <!-- AI Highlight Overlays -->
+                      <g id="ai-highlights-group"></g>
+
+                      <!-- Tooltips overlay -->
+                      <g id="canvas-tooltips-group"></g>
+
+                      <!-- Markup Selection Overlay (handles, outlines) -->
+                      <g id="markup-selection-group"></g>
+                    </svg>
+
+                    <div class="canvas-overlay-message" id="canvas-prompt-overlay">
+                      <div class="overlay-content">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="overlay-icon">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2" />
+                          <line x1="9" y1="3" x2="9" y2="21" />
+                          <line x1="15" y1="3" x2="15" y2="21" />
+                          <line x1="3" y1="9" x2="21" y2="9" />
+                          <line x1="3" y1="15" x2="21" y2="15" />
+                        </svg>
+                        <h4>Interactive Takeoff Ready</h4>
+                        <p>Click "Run AI Takeoff Analysis" to start the computer vision parser.</p>
+                      </div>
+                    </div>
+
+                    <!-- Live tooltip box -->
+                    <div class="html-tooltip" id="canvas-html-tooltip"></div>
+
+                    <!-- Floating Canvas Takeoff Legend -->
+                    <div class="canvas-takeoff-legend" id="canvas-legend" style="position: absolute; bottom: 1rem; right: 1rem; background: rgba(13, 21, 39, 0.85); backdrop-filter: blur(10px); border: 1.5px solid var(--slate-border); border-radius: 8px; padding: 0.75rem; z-index: 10; display: none; flex-direction: column; gap: 0.5rem; transition: all 0.3s ease;">
+                      <div style="font-size: 0.75rem; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1.5px solid rgba(255,255,255,0.08); padding-bottom: 0.25rem; margin-bottom: 0.25rem; font-family: var(--font-sans);">Takeoff Legend</div>
+                      <div class="legend-item" data-target-layer="areas" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(99, 102, 241, 0.5); border: 1px solid #6366f1;"></span>
+                        <span>Measured Areas (Rooms)</span>
+                      </div>
+                      <div class="legend-item" data-target-layer="walls" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
+                        <span style="width: 10px; height: 1.5px; background: #334155;"></span>
+                        <span>Interior Walls (LF)</span>
+                      </div>
+                      <div class="legend-item" data-target-layer="counts" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #06b6d4; border: 1px solid #ffffff;"></span>
+                        <span>Doors & Openings</span>
+                      </div>
+                      <div class="legend-item" data-target-layer="counts" style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 50%; background: #f59e0b; border: 1px solid #ffffff;"></span>
+                        <span>Window Openings</span>
+                      </div>
+                      <div class="legend-item" data-target-layer="manual" id="legend-manual-item" style="display: none; align-items: center; gap: 0.5rem; font-size: 0.75rem; color: var(--text-muted); cursor: pointer; transition: color 0.2s;">
+                        <span style="width: 10px; height: 10px; border-radius: 2px; background: rgba(16, 185, 129, 0.4); border: 1.5px dashed var(--emerald);"></span>
+                        <span>Manual Markups</span>
+                      </div>
+                      <div style="font-size: 0.65rem; color: var(--text-muted); font-style: italic; border-top: 1.5px solid rgba(255,255,255,0.08); padding-top: 0.25rem; margin-top: 0.25rem; font-family: var(--font-sans);">Hover to isolate layer</div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- 3. Bottom Bluebeam Revu Status Dock -->
+              <div class="bluebeam-statusbar" style="background: #090e1a; border-top: 1.5px solid var(--slate-border); padding: 0.35rem 0.85rem; font-size: 0.72rem; color: var(--text-muted); display: flex; justify-content: space-between; align-items: center; font-family: var(--font-sans);">
+                <div class="bb-status-left" style="display: flex; align-items: center; gap: 0.75rem;">
+                  <span class="bb-status-pill" id="bb-scale-pill" style="background: rgba(99,102,241,0.15); color: var(--indigo-light); padding: 0.15rem 0.4rem; border-radius: 3px; border: 1px solid var(--indigo); font-size: 0.68rem; font-weight: 600;">Scale: 1/4" = 1'-0"</span>
+                  <span class="bb-status-pill" id="bb-coords-pill" style="font-family: monospace;">X: 0 px, Y: 0 px</span>
+                </div>
+                <div class="bb-status-center" style="display: flex; align-items: center; gap: 0.5rem;">
+                  <button class="bb-status-toggle active" id="toggle-snap-grid" style="background: rgba(16,185,129,0.15); border: 1px solid var(--emerald); color: var(--emerald); padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.65rem; font-weight: 600; cursor: pointer;">⚡ Snap Grid</button>
+                  <button class="bb-status-toggle active" id="toggle-snap-markup" style="background: rgba(6,182,212,0.15); border: 1px solid var(--cyan); color: var(--cyan); padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.65rem; font-weight: 600; cursor: pointer;">🧲 Snap Edge</button>
+                  <button class="bb-status-toggle active" id="toggle-ortho-lock" style="background: rgba(245,158,11,0.15); border: 1px solid var(--amber); color: var(--amber); padding: 0.15rem 0.4rem; border-radius: 3px; font-size: 0.65rem; font-weight: 600; cursor: pointer;">📐 Ortho (Shift)</button>
+                </div>
+                <div class="bb-status-right" style="display: flex; align-items: center; gap: 0.5rem;">
+                  <span style="color: var(--emerald); font-weight: 600;">● Bluebeam Revu Mode Active</span>
                 </div>
               </div>
             </div>

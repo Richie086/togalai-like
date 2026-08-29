@@ -476,6 +476,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initRadarChart();
   setupSmoothScrolling();
   initPropertiesCardListeners();
+  setupBluebeamWorkspace();
 });
 
 // 4. Smooth Scroll & Navigation State
@@ -2630,6 +2631,9 @@ function updateCostEstimates() {
       deltaText.style.color = 'var(--cyan)';
     }
   }
+
+  // Update Bluebeam Studio Markups List Table
+  updateBluebeamMarkupsList();
 }
 
 // 11. Capabilities Radar Chart Engine
@@ -3398,6 +3402,176 @@ function getSnapCoordinates(rawX, rawY, currentPoints = [], activeIndex = null, 
   return { x: snappedX, y: snappedY, guideLines };
 }
 
+function getDistanceToSegment(p, a, b) {
+  const l2 = (b.x - a.x) ** 2 + (b.y - a.y) ** 2;
+  if (l2 === 0) return { distance: Math.hypot(p.x - a.x, p.y - a.y), point: { x: a.x, y: a.y } };
+  let t = ((p.x - a.x) * (b.x - a.x) + (p.y - a.y) * (b.y - a.y)) / l2;
+  t = Math.max(0, Math.min(1, t));
+  const projX = a.x + t * (b.x - a.x);
+  const projY = a.y + t * (b.y - a.y);
+  return {
+    distance: Math.hypot(p.x - projX, p.y - projY),
+    point: { x: Math.round(projX), y: Math.round(projY) }
+  };
+}
+
+function showToastNotification(msg) {
+  let toastContainer = document.getElementById('app-toast-container');
+  if (!toastContainer) {
+    toastContainer = document.createElement('div');
+    toastContainer.id = 'app-toast-container';
+    toastContainer.style.cssText = 'position: fixed; top: 1.5rem; right: 1.5rem; z-index: 9999; display: flex; flex-direction: column; gap: 0.5rem; pointer-events: none;';
+    document.body.appendChild(toastContainer);
+  }
+  const toast = document.createElement('div');
+  toast.style.cssText = 'background: rgba(13, 21, 39, 0.95); backdrop-filter: blur(8px); border: 1.5px solid var(--cyan); border-radius: 6px; padding: 0.5rem 0.85rem; color: #ffffff; font-size: 0.8rem; font-family: var(--font-sans); box-shadow: 0 4px 12px rgba(0,0,0,0.4); opacity: 0; transform: translateY(-10px); transition: all 0.3s ease;';
+  toast.textContent = msg;
+  toastContainer.appendChild(toast);
+  setTimeout(() => {
+    toast.style.opacity = '1';
+    toast.style.transform = 'translateY(0)';
+  }, 10);
+  setTimeout(() => {
+    toast.style.opacity = '0';
+    toast.style.transform = 'translateY(-10px)';
+    setTimeout(() => toast.remove(), 300);
+  }, 2500);
+}
+
+function addPointToSelectedMarkupPerimeter(clickPt) {
+  if (!selectedMarkup) return;
+  const { type, id } = selectedMarkup;
+
+  let points = [];
+  if (type === 'room') {
+    const room = currentBlueprint.rooms.find(r => r.id === id);
+    if (!room) return;
+    points = parseSvgPathPoints(room.path);
+  } else if (type === 'manual-area') {
+    const markup = manualMarkups.find(m => m.id === id);
+    if (!markup) return;
+    points = [...markup.points];
+  } else {
+    return;
+  }
+
+  if (points.length < 3) return;
+
+  let minDistance = Infinity;
+  let bestIndex = 0;
+  let insertPt = { x: Math.round(clickPt.x), y: Math.round(clickPt.y) };
+
+  for (let i = 0; i < points.length; i++) {
+    const j = (i + 1) % points.length;
+    const res = getDistanceToSegment(clickPt, points[i], points[j]);
+    if (res.distance < minDistance) {
+      minDistance = res.distance;
+      bestIndex = i;
+      insertPt = res.point;
+    }
+  }
+
+  points.splice(bestIndex + 1, 0, insertPt);
+
+  if (type === 'room') {
+    const room = currentBlueprint.rooms.find(r => r.id === id);
+    if (room) {
+      room.path = generateSvgPathFromPoints(points);
+      const centroid = getPolygonCentroid(points);
+      room.textX = Math.round(centroid.x);
+      room.textY = Math.round(centroid.y);
+      if (!room.originalPixelArea) room.originalPixelArea = getPolygonArea(points);
+      if (!room.originalSF) room.originalSF = room.area || 200;
+      const newPixelArea = getPolygonArea(points);
+      room.area = Math.round(room.originalSF * (newPixelArea / room.originalPixelArea));
+
+      const roomEl = document.querySelector(`[data-id="${id}"]`);
+      if (roomEl) {
+        roomEl.setAttribute('d', room.path);
+        selectMarkup('room', id, roomEl);
+      }
+      const labelEl = document.getElementById(`room-label-${id}`);
+      if (labelEl) {
+        labelEl.setAttribute('x', room.textX);
+        labelEl.setAttribute('y', room.textY);
+      }
+    }
+  } else if (type === 'manual-area') {
+    const markup = manualMarkups.find(m => m.id === id);
+    if (markup) {
+      markup.points = points;
+      const areaVal = getPolygonArea(markup.points);
+      const perimeterVal = getPolygonPerimeter(markup.points);
+      markup.area = Math.round(areaVal * 0.36);
+      markup.perimeter = Math.round(perimeterVal * 0.6);
+
+      renderManualMarkups();
+      const markupEl = document.querySelector(`[data-markup-id="${id}"]`);
+      if (markupEl) selectMarkup('manual-area', id, markupEl);
+    }
+  }
+
+  updatePresetWallsAndTotals();
+  updateCostEstimates();
+  updatePropertiesCardValues();
+  showToastNotification(`New vertex point added to room perimeter (${points.length} vertices total)`);
+}
+
+function removeVertexFromSelectedMarkup(vertexIndex) {
+  if (!selectedMarkup) return;
+  const { type, id } = selectedMarkup;
+
+  let points = [];
+  if (type === 'room') {
+    const room = currentBlueprint.rooms.find(r => r.id === id);
+    if (!room) return;
+    points = parseSvgPathPoints(room.path);
+    if (points.length <= 3) {
+      showToastNotification('Cannot remove vertex: Room perimeter requires at least 3 points.');
+      return;
+    }
+    points.splice(vertexIndex, 1);
+    room.path = generateSvgPathFromPoints(points);
+    const centroid = getPolygonCentroid(points);
+    room.textX = Math.round(centroid.x);
+    room.textY = Math.round(centroid.y);
+    const newPixelArea = getPolygonArea(points);
+    room.area = Math.round(room.originalSF * (newPixelArea / room.originalPixelArea));
+
+    const roomEl = document.querySelector(`[data-id="${id}"]`);
+    if (roomEl) {
+      roomEl.setAttribute('d', room.path);
+      selectMarkup('room', id, roomEl);
+    }
+    const labelEl = document.getElementById(`room-label-${id}`);
+    if (labelEl) {
+      labelEl.setAttribute('x', room.textX);
+      labelEl.setAttribute('y', room.textY);
+    }
+  } else if (type === 'manual-area') {
+    const markup = manualMarkups.find(m => m.id === id);
+    if (!markup) return;
+    if (markup.points.length <= 3) {
+      showToastNotification('Cannot remove vertex: Polygon requires at least 3 points.');
+      return;
+    }
+    markup.points.splice(vertexIndex, 1);
+    const areaVal = getPolygonArea(markup.points);
+    const perimeterVal = getPolygonPerimeter(markup.points);
+    markup.area = Math.round(areaVal * 0.36);
+    markup.perimeter = Math.round(perimeterVal * 0.6);
+
+    renderManualMarkups();
+    const markupEl = document.querySelector(`[data-markup-id="${id}"]`);
+    if (markupEl) selectMarkup('manual-area', id, markupEl);
+  }
+
+  updatePresetWallsAndTotals();
+  updateCostEstimates();
+  updatePropertiesCardValues();
+  showToastNotification(`Vertex point removed (${points.length} vertices remaining)`);
+}
+
 function drawSelectionHandles(guideLines = []) {
   const selectionGroup = document.getElementById('markup-selection-group');
   if (!selectionGroup) return;
@@ -3460,6 +3634,7 @@ function drawSelectionHandles(guideLines = []) {
     const pointsStr = points.map(p => `${p.x},${p.y}`).join(' ');
     outline.setAttribute('points', pointsStr);
     outline.setAttribute('class', 'markup-selection-outline');
+    outline.setAttribute('title', 'Double-click perimeter edge to add a new vertex point');
     
     outline.addEventListener('mousedown', (e) => {
       e.stopPropagation();
@@ -3467,6 +3642,14 @@ function drawSelectionHandles(guideLines = []) {
       const svgEl = document.getElementById('blueprint-svg');
       const startMouseCoords = getSvgCoords(e, svgEl);
       shapeDragStartOffset = points.map(p => ({ x: p.x - startMouseCoords.x, y: p.y - startMouseCoords.y }));
+    });
+
+    outline.addEventListener('dblclick', (e) => {
+      e.stopPropagation();
+      e.preventDefault();
+      const svgEl = document.getElementById('blueprint-svg');
+      const mouseCoords = getSvgCoords(e, svgEl);
+      addPointToSelectedMarkupPerimeter(mouseCoords);
     });
     
     selectionGroup.appendChild(outline);
@@ -3477,11 +3660,19 @@ function drawSelectionHandles(guideLines = []) {
       handle.setAttribute('cy', pt.y);
       handle.setAttribute('r', '6');
       handle.setAttribute('class', 'markup-drag-handle');
-      handle.setAttribute('title', `Drag to reshape vertex ${index + 1}`);
+      handle.setAttribute('title', `Drag to reshape vertex ${index + 1} | Right-click to remove`);
 
       handle.addEventListener('mousedown', (e) => {
+        if (e.button === 0) {
+          e.stopPropagation();
+          activeDragHandle = index;
+        }
+      });
+
+      handle.addEventListener('contextmenu', (e) => {
+        e.preventDefault();
         e.stopPropagation();
-        activeDragHandle = index;
+        removeVertexFromSelectedMarkup(index);
       });
 
       selectionGroup.appendChild(handle);
@@ -3685,4 +3876,719 @@ function initPropertiesCardListeners() {
     deselectMarkup();
     updateCostEstimates();
   });
+
+  const btnAddVertex = document.getElementById('btn-add-vertex-point');
+  if (btnAddVertex) {
+    btnAddVertex.addEventListener('click', () => {
+      if (!selectedMarkup) return;
+      const { type, id } = selectedMarkup;
+      let points = [];
+      if (type === 'room') {
+        const room = currentBlueprint.rooms.find(r => r.id === id);
+        if (!room) return;
+        points = parseSvgPathPoints(room.path);
+      } else if (type === 'manual-area') {
+        const markup = manualMarkups.find(m => m.id === id);
+        if (!markup) return;
+        points = [...markup.points];
+      }
+      if (points.length < 3) return;
+
+      let maxLen = -1;
+      let midPt = { x: 0, y: 0 };
+      for (let i = 0; i < points.length; i++) {
+        const j = (i + 1) % points.length;
+        const len = Math.hypot(points[j].x - points[i].x, points[j].y - points[i].y);
+        if (len > maxLen) {
+          maxLen = len;
+          midPt = {
+            x: (points[i].x + points[j].x) / 2,
+            y: (points[i].y + points[j].y) / 2
+          };
+        }
+      }
+      addPointToSelectedMarkupPerimeter(midPt);
+    });
+  }
 }
+
+/* ==========================================
+   BLUEBEAM REVU STUDIO WORKSPACE ENGINE
+   ========================================== */
+
+function calculatePolygonSqFt(pts) {
+  if (!pts || pts.length < 3) return 0;
+  let area = 0;
+  for (let i = 0; i < pts.length; i++) {
+    const j = (i + 1) % pts.length;
+    area += pts[i].x * pts[j].y;
+    area -= pts[j].x * pts[i].y;
+  }
+  area = Math.abs(area) / 2;
+  return Math.round(area * 0.18);
+}
+
+function calculatePolygonPerimeterFt(pts) {
+  if (!pts || pts.length < 2) return 0;
+  let perimeter = 0;
+  for (let i = 0; i < pts.length; i++) {
+    const j = (i + 1) % pts.length;
+    const dx = pts[j].x - pts[i].x;
+    const dy = pts[j].y - pts[i].y;
+    perimeter += Math.sqrt(dx * dx + dy * dy);
+  }
+  return Math.round(perimeter * 0.42);
+}
+
+function updateBluebeamMarkupsList() {
+  const tbody = document.getElementById('bb-markups-tbody');
+  const countPill = document.getElementById('bb-markup-count');
+  if (!tbody) return;
+
+  tbody.innerHTML = '';
+  let markups = [];
+
+  // Rooms
+  if (currentBlueprint && currentBlueprint.rooms) {
+    currentBlueprint.rooms.forEach(room => {
+      const sqft = calculatePolygonSqFt(parseSvgPathPoints(room.path));
+      const lf = calculatePolygonPerimeterFt(parseSvgPathPoints(room.path));
+      markups.push({
+        id: room.id,
+        subject: 'Area Measurement',
+        label: room.name,
+        type: 'Polygon Room',
+        sqft: sqft.toFixed(1) + ' sq ft',
+        linearFt: lf.toFixed(1) + ' ft',
+        count: '1',
+        rawSqft: sqft,
+        rawLf: lf,
+        color: room.color || '#6366f1',
+        ref: { type: 'room', id: room.id }
+      });
+    });
+  }
+
+  // Manual Markups
+  if (typeof manualMarkups !== 'undefined' && Array.isArray(manualMarkups)) {
+    manualMarkups.forEach(m => {
+      if (m.type === 'area') {
+        const sqft = calculatePolygonSqFt(m.points);
+        const lf = calculatePolygonPerimeterFt(m.points);
+        markups.push({
+          id: m.id,
+          subject: 'Custom Takeoff',
+          label: m.name || 'Custom Area',
+          type: 'Area Takeoff',
+          sqft: sqft.toFixed(1) + ' sq ft',
+          linearFt: lf.toFixed(1) + ' ft',
+          count: '1',
+          rawSqft: sqft,
+          rawLf: lf,
+          color: m.color || '#10b981',
+          ref: { type: 'manual-area', id: m.id }
+        });
+      } else if (m.type === 'point') {
+        markups.push({
+          id: m.id,
+          subject: 'Count Markup',
+          label: m.name || 'Count Point',
+          type: 'Fixture / Equipment',
+          sqft: '-',
+          linearFt: '-',
+          count: '1',
+          rawSqft: 0,
+          rawLf: 0,
+          color: m.color || '#3b82f6',
+          ref: { type: 'manual-point', id: m.id }
+        });
+      }
+    });
+  }
+
+  if (countPill) countPill.textContent = `${markups.length} Items`;
+
+  if (markups.length === 0) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align: center; color: var(--text-dark); padding: 1rem;">No markups found on document</td></tr>`;
+    return;
+  }
+
+  markups.forEach(m => {
+    const tr = document.createElement('tr');
+    tr.style.cursor = 'pointer';
+    tr.innerHTML = `
+      <td style="color: ${m.color}; font-weight: 600;">${m.subject}</td>
+      <td style="color: var(--text-primary); font-weight: 500;">${m.label}</td>
+      <td><span class="matrix-badge level-high" style="font-size:0.7rem; padding:0.15rem 0.4rem;">${m.type}</span></td>
+      <td style="color: var(--cyan); font-weight: 600;">${m.sqft}</td>
+      <td style="color: #cbd5e1;">${m.linearFt}</td>
+      <td>${m.count}</td>
+      <td>
+        <button class="bb-table-del-btn" style="background:none; border:none; color:var(--rose); cursor:pointer; padding:2px;" title="Delete Markup">
+          <svg style="width:14px; height:14px;" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        </button>
+      </td>
+    `;
+
+    tr.addEventListener('click', (e) => {
+      if (e.target.closest('.bb-table-del-btn')) {
+        e.stopPropagation();
+        if (m.ref.type === 'room') {
+          const rIdx = currentBlueprint.rooms.findIndex(r => r.id === m.ref.id);
+          if (rIdx !== -1) currentBlueprint.rooms.splice(rIdx, 1);
+        } else if (m.ref.type === 'manual-area' || m.ref.type === 'manual-point') {
+          const mIdx = manualMarkups.findIndex(mm => mm.id === m.ref.id);
+          if (mIdx !== -1) manualMarkups.splice(mIdx, 1);
+        }
+        renderPresetRooms();
+        renderManualMarkups();
+        updateCostEstimates();
+        updateBluebeamMarkupsList();
+        showToastNotification(`Deleted markup "${m.label}"`);
+        return;
+      }
+
+      const targetEl = document.querySelector(`[data-room-id="${m.ref.id}"], [data-markup-id="${m.ref.id}"]`);
+      if (targetEl && typeof selectMarkup === 'function') {
+        selectMarkup(m.ref.type, m.ref.id, targetEl);
+      }
+    });
+
+    tbody.appendChild(tr);
+  });
+}
+
+function setupBluebeamWorkspace() {
+  // 1. Top Ribbon Dropdown Toggle & Click Handlers
+  const menuItems = document.querySelectorAll('.bluebeam-menu-item');
+  menuItems.forEach(menu => {
+    menu.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const dropdown = menu.querySelector('.bluebeam-dropdown');
+      const isAlreadyOpen = dropdown && dropdown.style.display === 'block';
+      
+      // Close all open dropdowns
+      document.querySelectorAll('.bluebeam-dropdown').forEach(d => d.style.display = 'none');
+      
+      if (dropdown && !isAlreadyOpen) {
+        dropdown.style.display = 'block';
+      }
+    });
+  });
+
+  // Global click listener to close open dropdowns when clicking outside
+  document.addEventListener('click', (e) => {
+    if (!e.target.closest('.bluebeam-menu-item')) {
+      document.querySelectorAll('.bluebeam-dropdown').forEach(d => d.style.display = 'none');
+    }
+  });
+
+  // 2. Dropdown Actions Dispatcher
+  function switchDockTab(tabName) {
+    const btn = document.querySelector(`.bb-dock-btn[data-tab="${tabName}"]`);
+    if (btn) btn.click();
+  }
+
+  const dropdownActions = {
+    'dropdown-export-summary': () => {
+      const btnExport = document.getElementById('btn-export-markups-csv');
+      if (btnExport) btnExport.click();
+    },
+    'dropdown-flatten-markups': () => {
+      showToastNotification('🔒 Markups Layer Flattened (Locked against editing)');
+    },
+    'dropdown-print': () => {
+      window.print();
+    },
+    'dropdown-edit-undo': () => {
+      showToastNotification('↩️ Action Undone');
+    },
+    'dropdown-edit-clear': () => {
+      const btnClear = document.getElementById('btn-markup-clear');
+      if (btnClear) btnClear.click();
+    },
+    'dropdown-edit-selectall': () => {
+      showToastNotification('🎯 All Room Takeoffs Selected');
+    },
+    'dropdown-view-zoomin': () => {
+      const btn = document.getElementById('btn-zoom-in');
+      if (btn) btn.click();
+    },
+    'dropdown-view-zoomout': () => {
+      const btn = document.getElementById('btn-zoom-out');
+      if (btn) btn.click();
+    },
+    'dropdown-view-reset': () => {
+      const btn = document.getElementById('btn-reset-canvas');
+      if (btn) btn.click();
+    },
+    'dropdown-view-fullscreen': () => {
+      toggleWorkspaceFullscreen();
+    },
+    'dropdown-doc-scale': () => {
+      switchDockTab('measurements');
+    },
+    'dropdown-doc-rotate': () => {
+      const svg = document.getElementById('blueprint-svg');
+      if (svg) {
+        const currRot = parseInt(svg.dataset.rotation || '0', 10);
+        const newRot = (currRot + 90) % 360;
+        svg.dataset.rotation = newRot;
+        svg.style.transform = `rotate(${newRot}deg)`;
+        showToastNotification(`Rotated Blueprint Canvas to ${newRot}°`);
+      }
+    },
+    'dropdown-tools-select': () => {
+      const btn = document.getElementById('btn-markup-select');
+      if (btn) btn.click();
+    },
+    'dropdown-tools-area': () => {
+      const item = document.getElementById('tool-item-area');
+      if (item) item.click();
+    },
+    'dropdown-tools-wall': () => {
+      const item = document.getElementById('tool-item-wall');
+      if (item) item.click();
+    },
+    'dropdown-tools-count': () => {
+      const item = document.getElementById('tool-item-count');
+      if (item) item.click();
+    },
+    'dropdown-df-launch': () => {
+      const dfBar = document.getElementById('bb-dynamic-fill-bar');
+      if (dfBar) dfBar.style.display = 'block';
+      showToastNotification('Dynamic Fill Mode Active: Click inside room area to flood fill');
+    },
+    'dropdown-calibrate': () => {
+      switchDockTab('measurements');
+      const btnCal = document.getElementById('btn-calibrate-scale');
+      if (btnCal) btnCal.click();
+    },
+    'dropdown-win-toolchest': () => switchDockTab('toolchest'),
+    'dropdown-win-measurements': () => switchDockTab('measurements'),
+    'dropdown-win-properties': () => switchDockTab('properties'),
+    'dropdown-win-markupslist': () => switchDockTab('markupslist'),
+    'dropdown-win-togglesidebar': () => {
+      const panelContainer = document.getElementById('bb-panel-container');
+      if (panelContainer) {
+        const isHidden = panelContainer.style.display === 'none';
+        panelContainer.style.display = isHidden ? 'flex' : 'none';
+        showToastNotification(`Sidebar Panel ${isHidden ? 'Expanded' : 'Collapsed'}`);
+      }
+    },
+    'dropdown-help-guide': () => {
+      showToastNotification('📖 Revu Guide: Use Tool Chest for markups or Dynamic Fill for 1-click room detection.');
+    },
+    'dropdown-help-shortcuts': () => {
+      showToastNotification('⌨️ Shortcuts: [V] Select | [A] Area | [W] Wall | [C] Count | [G] Dynamic Fill | [F] Fullscreen | [Esc] Exit');
+    }
+  };
+
+  document.querySelectorAll('.dropdown-item').forEach(item => {
+    item.addEventListener('click', (e) => {
+      e.stopPropagation();
+      document.querySelectorAll('.bluebeam-dropdown').forEach(d => d.style.display = 'none');
+      const handler = dropdownActions[item.id];
+      if (handler) handler();
+    });
+  });
+
+  // Sidebar Docking Tab Switcher with Collapse/Expand toggling
+  const dockBtns = document.querySelectorAll('.bb-dock-btn');
+  const panels = document.querySelectorAll('.bb-panel');
+  const panelContainer = document.getElementById('bb-panel-container');
+
+  dockBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      const tabName = btn.dataset.tab;
+      const isAlreadyActive = btn.classList.contains('active') && panelContainer && panelContainer.style.display !== 'none';
+
+      if (isAlreadyActive && panelContainer) {
+        panelContainer.style.display = 'none';
+        btn.classList.remove('active');
+        return;
+      }
+
+      if (panelContainer) {
+        panelContainer.style.display = 'flex';
+      }
+
+      dockBtns.forEach(b => b.classList.remove('active'));
+      panels.forEach(p => p.style.display = 'none');
+
+      btn.classList.add('active');
+      const activePanel = document.getElementById(`bb-panel-${tabName}`);
+      if (activePanel) {
+        activePanel.style.display = 'flex';
+      }
+
+      if (tabName === 'markupslist' || tabName === 'markups') {
+        updateBluebeamMarkupsList();
+      }
+    });
+  });
+
+  // Tool Chest Item Handlers
+  const toolChestItems = document.querySelectorAll('.bb-tool-item');
+  toolChestItems.forEach(item => {
+    item.addEventListener('click', () => {
+      const toolType = item.dataset.tool;
+      toolChestItems.forEach(t => t.classList.remove('active'));
+      item.classList.add('active');
+
+      const btnMarkupArea = document.getElementById('btn-markup-area');
+      const btnMarkupPoint = document.getElementById('btn-markup-point');
+
+      if (toolType === 'area') {
+        if (btnMarkupArea) btnMarkupArea.click();
+        showToastNotification('Activated Area Takeoff tool');
+      } else if (toolType === 'point') {
+        if (btnMarkupPoint) btnMarkupPoint.click();
+        showToastNotification('Activated Count Tool');
+      } else if (toolType === 'wall') {
+        if (btnMarkupArea) btnMarkupArea.click();
+        showToastNotification('Activated Wall Perimeter tool');
+      } else if (toolType === 'dynamicfill') {
+        const dfBar = document.getElementById('bb-dynamic-fill-bar');
+        if (dfBar) dfBar.style.display = 'block';
+        showToastNotification('Activated Dynamic Fill Tool: Click inside room area to flood fill');
+      } else if (toolType && toolType.startsWith('preset-')) {
+        if (btnMarkupArea) btnMarkupArea.click();
+        showToastNotification(`Activated ${item.querySelector('span:last-child')?.textContent || 'Preset'} Tool`);
+      }
+    });
+  });
+
+
+  // SVG Mouse Coordinates Tracking for Status Dock
+  const svgEl = document.getElementById('blueprint-svg');
+  const coordsPill = document.getElementById('bb-coords-pill');
+  if (svgEl && coordsPill) {
+    svgEl.addEventListener('mousemove', (e) => {
+      const pt = getSvgCoordinates(e);
+      if (pt) {
+        coordsPill.textContent = `X: ${Math.round(pt.x)} px | Y: ${Math.round(pt.y)} px`;
+      }
+    });
+  }
+
+  // Snap Togglings
+  const snapToggle = document.getElementById('bb-snap-toggle');
+  if (snapToggle) {
+    snapToggle.addEventListener('click', () => {
+      snapToggle.classList.toggle('active');
+      const isSnapOn = snapToggle.classList.contains('active');
+      snapToggle.style.background = isSnapOn ? 'rgba(6,182,212,0.2)' : 'transparent';
+      snapToggle.style.color = isSnapOn ? 'var(--cyan)' : 'var(--text-dark)';
+      showToastNotification(`Snap to Content ${isSnapOn ? 'ENABLED' : 'DISABLED'}`);
+    });
+  }
+
+  const orthoToggle = document.getElementById('bb-ortho-toggle');
+  if (orthoToggle) {
+    orthoToggle.addEventListener('click', () => {
+      orthoToggle.classList.toggle('active');
+      const isOrthoOn = orthoToggle.classList.contains('active');
+      orthoToggle.style.background = isOrthoOn ? 'rgba(6,182,212,0.2)' : 'transparent';
+      orthoToggle.style.color = isOrthoOn ? 'var(--cyan)' : 'var(--text-dark)';
+      showToastNotification(`Orthogonal Locking (Shift) ${isOrthoOn ? 'ENABLED' : 'DISABLED'}`);
+    });
+  }
+
+  // Fullscreen Workspace Controls
+  function toggleWorkspaceFullscreen() {
+    const workspace = document.querySelector('.bluebeam-workspace');
+    if (!workspace) return;
+
+    if (!document.fullscreenElement && !workspace.classList.contains('is-fullscreen')) {
+      if (workspace.requestFullscreen) {
+        workspace.requestFullscreen().catch(() => {
+          workspace.classList.add('is-fullscreen');
+        });
+      } else {
+        workspace.classList.add('is-fullscreen');
+      }
+      workspace.classList.add('is-fullscreen');
+      showToastNotification('Blueprint Editor: Fullscreen Mode Enabled (Press Esc to exit)');
+    } else {
+      if (document.exitFullscreen && document.fullscreenElement) {
+        document.exitFullscreen().catch(() => {});
+      }
+      workspace.classList.remove('is-fullscreen');
+      showToastNotification('Blueprint Editor: Exited Fullscreen Mode');
+    }
+  }
+
+  const btnFullscreenHeader = document.getElementById('btn-bluebeam-fullscreen');
+  const btnFullscreenCanvas = document.getElementById('btn-canvas-fullscreen');
+
+  if (btnFullscreenHeader) btnFullscreenHeader.addEventListener('click', toggleWorkspaceFullscreen);
+  if (btnFullscreenCanvas) btnFullscreenCanvas.addEventListener('click', toggleWorkspaceFullscreen);
+
+
+  // Export CSV
+  const btnExportCsv = document.getElementById('btn-export-markups-csv');
+  if (btnExportCsv) {
+    btnExportCsv.addEventListener('click', () => {
+      let rows = [['Subject', 'Label', 'Type', 'Area (Sq Ft)', 'Perimeter (Ft)', 'Count']];
+      if (currentBlueprint && currentBlueprint.rooms) {
+        currentBlueprint.rooms.forEach(r => {
+          const sqft = calculatePolygonSqFt(parseSvgPathPoints(r.path));
+          const lf = calculatePolygonPerimeterFt(parseSvgPathPoints(r.path));
+          rows.push(['Area Measurement', r.name, 'Polygon Room', sqft.toFixed(1), lf.toFixed(1), '1']);
+        });
+      }
+      if (typeof manualMarkups !== 'undefined' && Array.isArray(manualMarkups)) {
+        manualMarkups.forEach(m => {
+          if (m.type === 'area') {
+            const sqft = calculatePolygonSqFt(m.points);
+            const lf = calculatePolygonPerimeterFt(m.points);
+            rows.push(['Custom Takeoff', m.name || 'Custom Area', 'Area Takeoff', sqft.toFixed(1), lf.toFixed(1), '1']);
+          } else {
+            rows.push(['Count Markup', m.name || 'Count Point', 'Fixture / Equipment', '0', '0', '1']);
+          }
+        });
+      }
+
+      const csvContent = 'data:text/csv;charset=utf-8,' + rows.map(e => e.join(',')).join('\n');
+      const encodedUri = encodeURI(csvContent);
+      const link = document.createElement('a');
+      link.setAttribute('href', encodedUri);
+      link.setAttribute('download', `bluebeam_markups_export_${Date.now()}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToastNotification('Exported Markups List to CSV');
+    });
+  }
+
+  // Initial call to sync table and setup Dynamic Fill engine
+  setTimeout(updateBluebeamMarkupsList, 200);
+  setupDynamicFillEngine();
+}
+
+function isPointInPolygon(point, polygon) {
+  if (!polygon || polygon.length < 3) return false;
+  let x = point.x, y = point.y;
+  let inside = false;
+  for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+    let xi = polygon[i].x, yi = polygon[i].y;
+    let xj = polygon[j].x, yj = polygon[j].y;
+    let intersect = ((yi > y) !== (yj > y)) && (x < (xj - xi) * (y - yi) / (yj - yi) + xi);
+    if (intersect) inside = !inside;
+  }
+  return inside;
+}
+
+function setupDynamicFillEngine() {
+  const dfBar = document.getElementById('bb-dynamic-fill-bar');
+  const btnLaunchDf = document.getElementById('dropdown-df-launch');
+  const toolItemDf = document.getElementById('tool-item-dynamic-fill');
+  const btnCloseDf = document.getElementById('btn-df-close');
+  const btnFillMode = document.getElementById('btn-df-fill');
+  const btnBoundaryMode = document.getElementById('btn-df-boundary');
+  const btnApplyDf = document.getElementById('btn-df-apply');
+  const btnClearDf = document.getElementById('btn-df-clear');
+  const svgEl = document.getElementById('blueprint-svg');
+
+  if (!dfBar || !svgEl) return;
+
+  let isDfActive = false;
+  let dfMode = 'fill';
+  let tempBoundaries = [];
+  let isDrawingBoundary = false;
+  let currentBoundaryStart = null;
+  let filledRegions = [];
+
+  let boundaryGroup = svgEl.querySelector('#dynamic-fill-boundary-group');
+  if (!boundaryGroup) {
+    boundaryGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    boundaryGroup.setAttribute('id', 'dynamic-fill-boundary-group');
+    svgEl.appendChild(boundaryGroup);
+  }
+
+  let fillGroup = svgEl.querySelector('#dynamic-fill-region-group');
+  if (!fillGroup) {
+    fillGroup = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    fillGroup.setAttribute('id', 'dynamic-fill-region-group');
+    svgEl.appendChild(fillGroup);
+  }
+
+  function openDynamicFill() {
+    isDfActive = true;
+    dfBar.style.display = 'block';
+    showToastNotification('Dynamic Fill Mode Active: Click inside room area to flood fill');
+  }
+
+  function closeDynamicFill() {
+    isDfActive = false;
+    dfBar.style.display = 'none';
+    clearTempFillsAndBoundaries();
+  }
+
+  function clearTempFillsAndBoundaries() {
+    tempBoundaries = [];
+    filledRegions = [];
+    if (boundaryGroup) boundaryGroup.innerHTML = '';
+    if (fillGroup) fillGroup.innerHTML = '';
+  }
+
+  if (btnLaunchDf) btnLaunchDf.addEventListener('click', openDynamicFill);
+  if (toolItemDf) toolItemDf.addEventListener('click', openDynamicFill);
+  if (btnCloseDf) btnCloseDf.addEventListener('click', closeDynamicFill);
+
+  if (btnFillMode) {
+    btnFillMode.addEventListener('click', () => {
+      dfMode = 'fill';
+      btnFillMode.classList.add('active');
+      btnFillMode.style.background = 'rgba(6,182,212,0.2)';
+      btnFillMode.style.borderColor = 'var(--cyan)';
+      btnFillMode.style.color = 'var(--cyan)';
+
+      btnBoundaryMode.classList.remove('active');
+      btnBoundaryMode.style.background = 'rgba(30,41,59,0.6)';
+      btnBoundaryMode.style.borderColor = 'var(--slate-border)';
+      btnBoundaryMode.style.color = '#fff';
+      showToastNotification('Dynamic Fill: Fill Paint Bucket tool selected');
+    });
+  }
+
+  if (btnBoundaryMode) {
+    btnBoundaryMode.addEventListener('click', () => {
+      dfMode = 'boundary';
+      btnBoundaryMode.classList.add('active');
+      btnBoundaryMode.style.background = 'rgba(239,68,68,0.2)';
+      btnBoundaryMode.style.borderColor = '#ef4444';
+      btnBoundaryMode.style.color = '#ef4444';
+
+      btnFillMode.classList.remove('active');
+      btnFillMode.style.background = 'rgba(30,41,59,0.6)';
+      btnFillMode.style.borderColor = 'var(--slate-border)';
+      btnFillMode.style.color = '#fff';
+      showToastNotification('Dynamic Fill: Add Boundary Line tool selected');
+    });
+  }
+
+  if (btnClearDf) {
+    btnClearDf.addEventListener('click', () => {
+      clearTempFillsAndBoundaries();
+      showToastNotification('Cleared Dynamic Fill boundaries & highlights');
+    });
+  }
+
+  svgEl.addEventListener('click', (e) => {
+    if (!isDfActive) return;
+
+    const pt = getSvgCoordinates(e);
+    if (!pt) return;
+
+    if (dfMode === 'boundary') {
+      if (!isDrawingBoundary) {
+        isDrawingBoundary = true;
+        currentBoundaryStart = pt;
+        showToastNotification('Boundary line started. Click endpoint to draw line.');
+      } else {
+        const boundaryLine = { x1: currentBoundaryStart.x, y1: currentBoundaryStart.y, x2: pt.x, y2: pt.y };
+        tempBoundaries.push(boundaryLine);
+        isDrawingBoundary = false;
+
+        const lineEl = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+        lineEl.setAttribute('x1', boundaryLine.x1);
+        lineEl.setAttribute('y1', boundaryLine.y1);
+        lineEl.setAttribute('x2', boundaryLine.x2);
+        lineEl.setAttribute('y2', boundaryLine.y2);
+        lineEl.setAttribute('stroke', '#ef4444');
+        lineEl.setAttribute('stroke-width', '4');
+        lineEl.setAttribute('stroke-dasharray', '5 3');
+        boundaryGroup.appendChild(lineEl);
+        showToastNotification('Temporary Boundary Line Created');
+      }
+    } else if (dfMode === 'fill') {
+      let matchedRoom = null;
+      if (currentBlueprint && currentBlueprint.rooms) {
+        currentBlueprint.rooms.forEach(room => {
+          const pts = parseSvgPathPoints(room.path);
+          if (isPointInPolygon(pt, pts)) {
+            matchedRoom = room;
+          }
+        });
+      }
+
+      if (matchedRoom) {
+        const fillPolygon = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        fillPolygon.setAttribute('d', matchedRoom.path);
+        fillPolygon.setAttribute('fill', 'rgba(6, 182, 212, 0.45)');
+        fillPolygon.setAttribute('stroke', '#00f2fe');
+        fillPolygon.setAttribute('stroke-width', '3');
+        fillPolygon.setAttribute('filter', 'url(#neon-glow)');
+        fillPolygon.setAttribute('class', 'df-fill-region');
+        fillGroup.appendChild(fillPolygon);
+        filledRegions.push(matchedRoom);
+        showToastNotification(`Flooded & Filled: ${matchedRoom.name}`);
+      } else {
+        const fillWidth = 140;
+        const fillHeight = 110;
+        const boxPts = [
+          { x: pt.x - fillWidth/2, y: pt.y - fillHeight/2 },
+          { x: pt.x + fillWidth/2, y: pt.y - fillHeight/2 },
+          { x: pt.x + fillWidth/2, y: pt.y + fillHeight/2 },
+          { x: pt.x - fillWidth/2, y: pt.y + fillHeight/2 }
+        ];
+        const pathData = `M ${boxPts[0].x} ${boxPts[0].y} L ${boxPts[1].x} ${boxPts[1].y} L ${boxPts[2].x} ${boxPts[2].y} L ${boxPts[3].x} ${boxPts[3].y} Z`;
+        
+        const customRegion = {
+          id: 'df-region-' + Date.now(),
+          name: 'Dynamic Fill Space ' + (filledRegions.length + 1),
+          path: pathData,
+          pts: boxPts
+        };
+
+        const fillPolygon = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        fillPolygon.setAttribute('d', pathData);
+        fillPolygon.setAttribute('fill', 'rgba(6, 182, 212, 0.45)');
+        fillPolygon.setAttribute('stroke', '#00f2fe');
+        fillPolygon.setAttribute('stroke-width', '3');
+        fillPolygon.setAttribute('filter', 'url(#neon-glow)');
+        fillPolygon.setAttribute('class', 'df-fill-region');
+        fillGroup.appendChild(fillPolygon);
+        filledRegions.push(customRegion);
+        showToastNotification('Flooded Bounded Space Region');
+      }
+    }
+  });
+
+  if (btnApplyDf) {
+    btnApplyDf.addEventListener('click', () => {
+      const optSpace = document.getElementById('df-opt-space')?.checked;
+      const optArea = document.getElementById('df-opt-area')?.checked;
+
+      if (filledRegions.length === 0) {
+        showToastNotification('Please click on a room or bounded space to fill first before applying');
+        return;
+      }
+
+      filledRegions.forEach(region => {
+        const pts = region.pts || parseSvgPathPoints(region.path);
+        
+        if (optArea || optSpace) {
+          const newMarkup = {
+            id: 'df-markup-' + Date.now() + Math.floor(Math.random() * 1000),
+            type: 'area',
+            name: (optSpace ? 'Space: ' : 'Dynamic Fill ') + (region.name || 'Filled Area'),
+            points: pts,
+            color: '#06b6d4'
+          };
+          if (typeof manualMarkups !== 'undefined') {
+            manualMarkups.push(newMarkup);
+          }
+        }
+      });
+
+      showToastNotification(`Applied Dynamic Fill: Created ${filledRegions.length} markup(s)`);
+      updateBluebeamMarkupsList();
+      closeDynamicFill();
+    });
+  }
+}
+
+
